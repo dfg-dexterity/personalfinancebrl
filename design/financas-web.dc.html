@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#e7e5dd}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .sb{scrollbar-width:thin;scrollbar-color:#cfcdc1 transparent}
+  .sb::-webkit-scrollbar{width:8px}
+  .sb::-webkit-scrollbar-thumb{background:#cfcdc1;border-radius:8px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+
+<div style="display:flex;height:100vh;width:100%;background:#f7f6f2;overflow:hidden">
+
+  <!-- ============ SIDEBAR ============ -->
+  <div style="flex:none;width:252px;background:#1c3525;color:#cfe0d3;display:flex;flex-direction:column;padding:24px 16px">
+    <div style="display:flex;align-items:center;gap:11px;padding:4px 10px 26px">
+      <div style="width:32px;height:32px;border-radius:10px;background:#9ee6b5;color:#1c3525;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">f</div>
+      <div style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.3px">finanças</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:3px;flex:1">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="8">
+        <div onClick="{{ n.onClick }}" style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;cursor:pointer;font-size:14px;font-weight:{{ n.weight }};color:{{ n.color }};background:{{ n.bg }}">
+          <span style="font-size:16px;width:20px;text-align:center;opacity:{{ n.iconOpacity }}">{{ n.icon }}</span>
+          <span style="flex:1">{{ n.label }}</span>
+          <sc-if value="{{ n.showBadge }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;background:#c98a3f;color:#fff;padding:1px 8px;border-radius:20px">{{ n.badge }}</span></sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="margin-top:16px;padding:13px;background:rgba(255,255,255,.06);border-radius:14px;display:flex;align-items:center;gap:11px">
+      <div style="width:38px;height:38px;border-radius:50%;background:#9ee6b5;color:#1c3525;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">MR</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Marina Ribeiro</div><div style="font-size:11px;color:#8fb29b">Plano Pro</div></div>
+      <span style="color:#8fb29b;font-size:16px">⚙</span>
+    </div>
+  </div>
+
+  <!-- ============ MAIN ============ -->
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+
+    <!-- topbar -->
+    <div style="flex:none;display:flex;align-items:center;gap:18px;padding:20px 36px;border-bottom:1px solid #ecebe3;background:#f7f6f2">
+      <div style="flex:1">
+        <div style="font-size:22px;font-weight:800;color:#26241e;letter-spacing:-0.4px">{{ pageTitle }}</div>
+        <div style="font-size:13px;color:#8a8678">{{ pageSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #ecebe3;border-radius:12px;padding:9px 14px;width:240px;color:#a8a499">
+        <span style="font-size:14px">⌕</span><span style="font-size:13px">Buscar transação…</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #ecebe3;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;color:#3a3833;cursor:pointer">📅 Junho 2026</div>
+      <div style="background:#1f3d2b;color:#fff;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer">+ Adicionar</div>
+    </div>
+
+    <!-- scroll content -->
+    <div class="sb" style="flex:1;overflow-y:auto;padding:{{ ui.pad }}">
+
+      <!-- ============ VISÃO GERAL ============ -->
+      <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+      <div style="">
+        <!-- KPI row -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:{{ ui.gap }};margin-bottom:{{ ui.gap }}">
+          <div style="background:#1f3d2b;border-radius:20px;padding:20px;color:#eef3ee">
+            <div style="font-size:12px;color:#a9c3b0">Patrimônio total</div>
+            <div style="font-size:27px;font-weight:800;letter-spacing:-0.5px;margin:6px 0 4px">{{ kpi.patrimonio }}</div>
+            <div style="font-size:12px;font-weight:600;color:{{ kpi.deltaColor }}">{{ kpi.delta }}</div>
+          </div>
+          <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:20px">
+            <div style="font-size:12px;color:#8a8678">Entradas</div>
+            <div style="font-size:27px;font-weight:800;color:#26241e;letter-spacing:-0.5px;margin:6px 0 4px">{{ kpi.entradas }}</div>
+            <div style="font-size:12px;color:#3f7a55;font-weight:600">{{ kpi.entradasNote }}</div>
+          </div>
+          <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:20px">
+            <div style="font-size:12px;color:#8a8678">Saídas</div>
+            <div style="font-size:27px;font-weight:800;color:#26241e;letter-spacing:-0.5px;margin:6px 0 4px">{{ kpi.saidas }}</div>
+            <div style="font-size:12px;font-weight:600;color:{{ kpi.saidasColor }}">{{ kpi.saidasNote }}</div>
+          </div>
+          <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:20px">
+            <div style="font-size:12px;color:#8a8678">Taxa de poupança</div>
+            <div style="font-size:27px;font-weight:800;color:#26241e;letter-spacing:-0.5px;margin:6px 0 4px">{{ kpi.savings }}</div>
+            <div style="font-size:12px;font-weight:600;color:{{ kpi.savingsColor }}">{{ kpi.savingsNote }}</div>
+          </div>
+        </div>
+
+        <!-- import banner -->
+        <sc-if value="{{ hasPendingImport }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ goImport }}" style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #ecdcc6;border-left:4px solid #c98a3f;border-radius:16px;padding:15px 18px;margin-bottom:22px;cursor:pointer">
+          <div style="width:36px;height:36px;border-radius:11px;background:#fbf0df;display:flex;align-items:center;justify-content:center;font-size:17px">↻</div>
+          <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#26241e">{{ pendingCount }} transações importadas aguardando revisão</div><div style="font-size:12.5px;color:#8a8678">Sincronizadas automaticamente via Open Finance · confirme as categorias</div></div>
+          <div style="font-size:13px;font-weight:700;color:#c98a3f">Revisar →</div>
+        </div>
+        </sc-if>
+
+        <!-- 2 columns -->
+        <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:{{ ui.gap }}">
+
+          <!-- left -->
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <!-- cashflow chart -->
+            <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:22px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+                <div style="font-size:15px;font-weight:700;color:#26241e">Fluxo de caixa</div>
+                <div style="display:flex;gap:16px;font-size:12px">
+                  <span style="color:#6b6759"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#3f7a55;margin-right:5px"></span>Entradas</span>
+                  <span style="color:#6b6759"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#d9bba6;margin-right:5px"></span>Saídas</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:18px;height:180px">
+                <sc-for list="{{ months }}" as="m" hint-placeholder-count="6">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+                    <div style="width:100%;display:flex;gap:6px;align-items:flex-end;height:100%;justify-content:center">
+                      <div style="width:18px;height:{{ m.inH }};background:#3f7a55;border-radius:4px 4px 0 0"></div>
+                      <div style="width:18px;height:{{ m.outH }};background:#d9bba6;border-radius:4px 4px 0 0"></div>
+                    </div>
+                    <span style="font-size:11px;color:#a8a499">{{ m.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- recent transactions -->
+            <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:22px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                <div style="font-size:15px;font-weight:700;color:#26241e">Transações recentes</div>
+                <span onClick="{{ goTx }}" style="font-size:13px;color:#3f7a55;font-weight:700;cursor:pointer">Ver todas</span>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ recentTx }}" as="t" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid #f0eee6">
+                    <div style="width:38px;height:38px;border-radius:11px;background:{{ t.catBg }};display:flex;align-items:center;justify-content:center;font-size:16px;flex:none">{{ t.icon }}</div>
+                    <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#26241e">{{ t.name }}</div><div style="font-size:12px;color:#a8a499">{{ t.account }} · {{ t.date }}</div></div>
+                    <span style="font-size:12px;font-weight:600;color:{{ t.catColor }};background:{{ t.catBg }};padding:3px 11px;border-radius:20px">{{ t.catName }}</span>
+                    <div style="width:110px;text-align:right;font-size:14px;font-weight:700;color:{{ t.amountColor }}">{{ t.amount }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <!-- right -->
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <!-- accounts -->
+            <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:22px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <div style="font-size:15px;font-weight:700;color:#26241e">Contas</div>
+                <span style="font-size:11px;font-weight:600;color:#3f7a55;background:#e3eee6;padding:3px 9px;border-radius:20px">Open Finance ✓</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:15px">
+                <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:36px;height:36px;border-radius:11px;background:{{ a.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">{{ a.letter }}</div>
+                    <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:#26241e">{{ a.name }}</div><div style="font-size:11.5px;color:#a8a499">{{ a.kind }}</div></div>
+                    <div style="font-size:14px;font-weight:700;color:#26241e">{{ a.balance }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- spending donut -->
+            <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:22px">
+              <div style="font-size:15px;font-weight:700;color:#26241e;margin-bottom:16px">Gastos por categoria</div>
+              <div style="display:flex;align-items:center;gap:18px">
+                <div style="width:108px;height:108px;border-radius:50%;flex:none;background:conic-gradient(#3f7a55 0 33%,#274d36 33% 58%,#6aa57f 58% 80%,#b08968 80% 92%,#5a8a9a 92% 100%);display:flex;align-items:center;justify-content:center">
+                  <div style="width:66px;height:66px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:15px;font-weight:800;color:#26241e">R$5,6k</div><div style="font-size:10px;color:#8a8678">total</div></div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:9px">
+                  <sc-for list="{{ reportCats }}" as="c" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;gap:9px;font-size:13px"><span style="width:10px;height:10px;border-radius:50%;background:{{ c.color }}"></span><span style="flex:1;color:#3a3833;font-weight:600">{{ c.name }}</span><span class="mono" style="color:#8a8678;font-size:12px">{{ c.pct }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <!-- budget mini -->
+            <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:22px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                <div style="font-size:15px;font-weight:700;color:#26241e">Orçamento</div>
+                <span onClick="{{ goBudget }}" style="font-size:13px;color:#3f7a55;font-weight:700;cursor:pointer">Gerenciar</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:13px">
+                <sc-for list="{{ budgetsMini }}" as="b" hint-placeholder-count="3">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span style="color:#3a3833;font-weight:600">{{ b.name }}</span><span class="mono" style="color:{{ b.textColor }}">{{ b.spent }} / {{ b.total }}</span></div>
+                    <div style="height:8px;border-radius:5px;background:#e6e3d8;overflow:hidden"><div style="width:{{ b.pct }};height:100%;border-radius:5px;background:{{ b.barColor }}"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ TRANSAÇÕES ============ -->
+      <sc-if value="{{ isTx }}" hint-placeholder-val="{{ false }}">
+      <div style=";background:#fff;border:1px solid #ecebe3;border-radius:20px;overflow:hidden">
+        <div style="display:flex;gap:8px;padding:18px 22px;border-bottom:1px solid #f0eee6">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+            <div onClick="{{ f.onClick }}" style="font-size:13px;font-weight:600;padding:8px 15px;border-radius:30px;cursor:pointer;background:{{ f.bg }};color:{{ f.color }};border:1px solid {{ f.border }}">{{ f.label }}</div>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;padding:11px 22px;font-size:11px;font-weight:600;color:#a8a499;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f0eee6">
+          <div style="flex:1">Descrição</div><div style="width:160px">Categoria</div><div style="width:140px">Conta</div><div style="width:90px">Data</div><div style="width:120px;text-align:right">Valor</div>
+        </div>
+        <sc-for list="{{ visibleTx }}" as="t" hint-placeholder-count="9">
+          <div onClick="{{ t.onClick }}" style="display:flex;align-items:center;padding:14px 22px;border-bottom:1px solid #f5f3ec;cursor:pointer;background:{{ t.rowBg }}">
+            <div style="flex:1;display:flex;align-items:center;gap:13px"><div style="width:38px;height:38px;border-radius:11px;background:{{ t.iconBg }};display:flex;align-items:center;justify-content:center;font-size:16px">{{ t.icon }}</div><span style="font-size:14px;font-weight:600;color:#26241e">{{ t.name }}</span></div>
+            <div style="width:160px"><span style="font-size:12px;font-weight:600;color:{{ t.catTextColor }};background:{{ t.catBg }};padding:4px 11px;border-radius:20px">{{ t.catLabel }}</span></div>
+            <div style="width:140px;font-size:13px;color:#6b6759">{{ t.account }}</div>
+            <div style="width:90px;font-size:13px;color:#a8a499">{{ t.date }}</div>
+            <div style="width:120px;text-align:right;font-size:14px;font-weight:700;color:{{ t.amountColor }}">{{ t.amount }}</div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- ============ ORÇAMENTOS ============ -->
+      <sc-if value="{{ isBudget }}" hint-placeholder-val="{{ false }}">
+      <div style="">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px">
+          <div style="background:#1f3d2b;border-radius:20px;padding:22px;color:#eef3ee">
+            <div style="font-size:13px;color:#a9c3b0">Total gasto</div>
+            <div style="font-size:26px;font-weight:800;margin:6px 0 12px">{{ budgetHero.spent }} <span style="font-size:15px;opacity:.6">/ {{ budgetHero.total }}</span></div>
+            <div style="height:9px;border-radius:6px;background:rgba(255,255,255,.15)"><div style="width:{{ budgetHero.pct }};height:100%;border-radius:6px;background:{{ budgetHero.barColor }}"></div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:22px"><div style="font-size:13px;color:#8a8678">Disponível</div><div style="font-size:26px;font-weight:800;margin-top:6px;color:{{ budgetHero.availColor }}">{{ budgetHero.available }}</div><div style="font-size:12px;color:#8a8678;margin-top:6px">para 11 dias</div></div>
+          <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:22px"><div style="font-size:13px;color:#8a8678">Projeção do mês</div><div style="font-size:26px;font-weight:800;margin-top:6px;color:{{ budgetHero.projColor }}">{{ budgetHero.projection }}</div><div style="font-size:12px;margin-top:6px;color:{{ budgetHero.projColor }}">{{ budgetHero.projNote }}</div></div>
+        </div>
+        <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:24px">
+          <div style="font-size:15px;font-weight:700;color:#26241e;margin-bottom:20px">Orçamentos por categoria</div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <sc-for list="{{ budgets }}" as="b" hint-placeholder-count="5">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:14px;font-weight:600;color:#26241e">{{ b.icon }} {{ b.name }}</span>
+                  <span class="mono" style="font-size:13px;color:{{ b.textColor }}">{{ b.spent }} / {{ b.total }}</span>
+                </div>
+                <div style="height:10px;border-radius:6px;background:#e6e3d8;overflow:hidden"><div style="width:{{ b.pct }};height:100%;border-radius:6px;background:{{ b.barColor }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:22px;border:1.5px dashed #cfcdc1;border-radius:16px;padding:15px;text-align:center;color:#8a8678;font-size:13px;cursor:pointer">+ Criar novo orçamento</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ RELATÓRIOS ============ -->
+      <sc-if value="{{ isReport }}" hint-placeholder-val="{{ false }}">
+      <div style=";display:grid;grid-template-columns:1.4fr 1fr;gap:18px">
+        <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:24px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:20px"><div style="font-size:15px;font-weight:700;color:#26241e">Entradas vs Saídas · 6 meses</div><span style="font-size:13px;color:#3f7a55;font-weight:700">Saldo +R$ 15.360</span></div>
+          <div style="display:flex;align-items:flex-end;gap:22px;height:220px">
+            <sc-for list="{{ months }}" as="m" hint-placeholder-count="6">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+                <div style="width:100%;display:flex;gap:7px;align-items:flex-end;height:100%;justify-content:center">
+                  <div style="width:20px;height:{{ m.inH }};background:#3f7a55;border-radius:4px 4px 0 0"></div>
+                  <div style="width:20px;height:{{ m.outH }};background:#d9bba6;border-radius:4px 4px 0 0"></div>
+                </div>
+                <span style="font-size:12px;color:#a8a499">{{ m.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:24px">
+            <div style="font-size:15px;font-weight:700;color:#26241e;margin-bottom:18px">Por categoria · junho</div>
+            <div style="display:flex;align-items:center;gap:20px">
+              <div style="width:120px;height:120px;border-radius:50%;flex:none;background:conic-gradient(#3f7a55 0 33%,#274d36 33% 58%,#6aa57f 58% 80%,#b08968 80% 92%,#5a8a9a 92% 100%);display:flex;align-items:center;justify-content:center">
+                <div style="width:72px;height:72px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:16px;font-weight:800;color:#26241e">R$5,6k</div><div style="font-size:10px;color:#8a8678">total</div></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ reportCats }}" as="c" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:9px;font-size:13px"><span style="width:11px;height:11px;border-radius:50%;background:{{ c.color }}"></span><span style="flex:1;color:#3a3833;font-weight:600">{{ c.name }}</span><span class="mono" style="color:#8a8678;font-size:12px">{{ c.pct }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="background:#eef3ee;border:1px solid #d7e6da;border-radius:20px;padding:20px;display:flex;gap:13px;align-items:flex-start">
+            <span style="font-size:20px">💡</span>
+            <div style="font-size:14px;line-height:1.55;color:#3f5e4a">{{ insight }}</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ IMPORTAÇÃO ============ -->
+      <sc-if value="{{ isImport }}" hint-placeholder-val="{{ false }}">
+      <div style=";max-width:760px">
+        <div style="height:9px;border-radius:6px;background:#e6e3d8;overflow:hidden;margin-bottom:20px"><div style="width:{{ importProgress }};height:100%;background:#3f7a55;border-radius:6px;transition:width .3s"></div></div>
+        <sc-if value="{{ hasPendingImport }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#6b6759;margin-bottom:16px">{{ pendingCount }} pendentes · {{ addedCount }} confirmadas. Confirme a categoria sugerida ou pule — decisões viram regras automáticas.</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <sc-for list="{{ pendingImports }}" as="i" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:18px;display:flex;align-items:center;gap:18px">
+                <div style="flex:1;min-width:0"><div class="mono" style="font-size:12px;color:#8a8678">{{ i.raw }}</div><div style="font-size:15px;font-weight:700;color:#26241e;margin-top:3px">{{ i.merchant }}</div></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="font-size:11px;color:#8a8678">sugerido:</span><span style="font-size:12px;font-weight:600;color:{{ i.catTextColor }};background:{{ i.catBg }};padding:4px 11px;border-radius:20px">{{ i.catIcon }} {{ i.catName }}</span></div>
+                <div style="width:110px;text-align:right;font-size:16px;font-weight:800;color:#c2603a">{{ i.amount }}</div>
+                <div style="display:flex;gap:9px"><div onClick="{{ i.onApprove }}" style="background:#1f3d2b;color:#fff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:12px;cursor:pointer">Confirmar</div><div onClick="{{ i.onSkip }}" style="background:#f0eee6;color:#6b6759;font-size:13px;font-weight:600;padding:10px 16px;border-radius:12px;cursor:pointer">Pular</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ importDone }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:70px 20px;background:#fff;border:1px solid #ecebe3;border-radius:20px">
+            <div style="width:76px;height:76px;border-radius:50%;background:#dfe9df;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 18px">✓</div>
+            <div style="font-size:20px;font-weight:800;color:#26241e">Tudo revisado!</div>
+            <div style="font-size:14px;color:#8a8678;margin-top:7px">{{ addedCount }} transações categorizadas e adicionadas aos seus gastos.</div>
+            <div onClick="{{ goDash }}" style="display:inline-block;margin-top:22px;background:#1f3d2b;color:#fff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:13px;cursor:pointer">Voltar à visão geral</div>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <!-- ============ CARTÕES ============ -->
+      <sc-if value="{{ isCard }}" hint-placeholder-val="{{ false }}">
+      <div style=";display:grid;grid-template-columns:340px 1fr;gap:22px">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="height:200px;border-radius:22px;background:linear-gradient(135deg,#274d36,#1a2f22);padding:24px;color:#eef3ee;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-30px;bottom:-50px;width:170px;height:170px;border-radius:50%;background:rgba(158,230,181,.08)"></div>
+            <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#a9c3b0">Fatura atual</span><span style="font-size:13px;color:#a9c3b0">Vence 12/jul</span></div>
+            <div style="font-size:32px;font-weight:800;margin-top:8px">{{ cardFatura }}</div>
+            <div style="position:absolute;bottom:24px;left:24px;right:24px">
+              <div style="height:7px;border-radius:5px;background:rgba(255,255,255,.18)"><div style="width:27%;height:100%;border-radius:5px;background:#9ee6b5"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:12px;color:#a9c3b0"><span>Limite usado</span><span>R$ 3.214 / R$ 12.000</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1;background:#fff;border:1px solid #ecebe3;border-radius:16px;padding:14px;text-align:center"><div style="font-size:11px;color:#8a8678">Fecha</div><div style="font-size:15px;font-weight:700;color:#26241e">05/jul</div></div>
+            <div style="flex:1;background:#fff;border:1px solid #ecebe3;border-radius:16px;padding:14px;text-align:center"><div style="font-size:11px;color:#8a8678">Melhor dia</div><div style="font-size:15px;font-weight:700;color:#3f7a55">06</div></div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:24px">
+          <div style="font-size:15px;font-weight:700;color:#26241e;margin-bottom:16px">Lançamentos da fatura</div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ cardTx }}" as="t" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid #f5f3ec">
+                <div style="width:38px;height:38px;border-radius:11px;background:{{ t.catBg }};display:flex;align-items:center;justify-content:center;font-size:16px">{{ t.icon }}</div>
+                <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#26241e">{{ t.name }}</div><div style="font-size:12px;color:#a8a499">{{ t.date }} · {{ t.installment }}</div></div>
+                <div style="font-size:14px;font-weight:700;color:#26241e">{{ t.amount }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ APLICAÇÕES ============ -->
+      <sc-if value="{{ isInvest }}" hint-placeholder-val="{{ false }}">
+      <div style="">
+        <div style="background:#1f3d2b;border-radius:20px;padding:24px;color:#eef3ee;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:13px;color:#a9c3b0">Total investido</div><div style="font-size:30px;font-weight:800;margin-top:5px">{{ investTotal }}</div></div>
+          <div style="text-align:right"><div style="font-size:13px;color:#9ee6b5;font-weight:600">+ R$ 372 este mês</div><div style="font-size:13px;color:#9ee6b5;font-weight:600">+1,2%</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <sc-for list="{{ investments }}" as="iv" hint-placeholder-count="4">
+            <div style="background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:20px;display:flex;align-items:center;gap:15px">
+              <div style="width:46px;height:46px;border-radius:13px;background:{{ iv.bg }};color:{{ iv.fg }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">{{ iv.tag }}</div>
+              <div style="flex:1"><div style="font-size:15px;font-weight:700;color:#26241e">{{ iv.name }}</div><div style="font-size:12.5px;color:#8a8678">{{ iv.sub }}</div></div>
+              <div style="text-align:right"><div style="font-size:15px;font-weight:700;color:#26241e">{{ iv.value }}</div><div style="font-size:13px;font-weight:600;color:{{ iv.changeColor }}">{{ iv.change }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ EMPRÉSTIMOS ============ -->
+      <sc-if value="{{ isLoan }}" hint-placeholder-val="{{ false }}">
+      <div style="">
+        <div style="background:#3a2c22;border-radius:20px;padding:24px;color:#f3ece4;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:13px;color:#cbb6a3">Saldo devedor total</div><div style="font-size:30px;font-weight:800;margin-top:5px">{{ loanTotal }}</div></div>
+          <div style="text-align:right"><div style="font-size:13px;color:#e7c3a3;font-weight:600">R$ 1.022/mês</div><div style="font-size:13px;color:#e7c3a3;font-weight:600">quitação mar/2028</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-for list="{{ loans }}" as="l" hint-placeholder-count="2">
+            <div style="background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:22px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+                <div><div style="font-size:16px;font-weight:700;color:#26241e">{{ l.name }}</div><div style="font-size:13px;color:#8a8678">{{ l.bank }} · {{ l.rate }}</div></div>
+                <div style="text-align:right"><div style="font-size:17px;font-weight:800;color:#26241e">{{ l.remaining }}</div><div style="font-size:12px;color:#8a8678">restante</div></div>
+              </div>
+              <div style="height:9px;border-radius:5px;background:#e6e3d8;overflow:hidden"><div style="width:{{ l.pct }};height:100%;background:#b08968;border-radius:5px"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:#6b6759"><span>{{ l.paid }} parcelas pagas</span><span>{{ l.monthly }}/mês</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ CONEXÕES ============ -->
+      <sc-if value="{{ isConnect }}" hint-placeholder-val="{{ false }}">
+      <div style=";max-width:680px">
+        <div style="background:#eef3ee;border:1px solid #d7e6da;border-radius:18px;padding:18px;display:flex;gap:13px;align-items:flex-start;margin-bottom:20px">
+          <span style="font-size:20px">🔒</span>
+          <div style="font-size:13.5px;line-height:1.55;color:#3f5e4a">Conexões autorizadas via Open Finance regulado pelo BACEN. Você controla o que compartilha e pode revogar a qualquer momento.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ banks }}" as="b" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:15px;background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:17px 20px">
+              <div style="width:44px;height:44px;border-radius:13px;background:{{ b.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">{{ b.letter }}</div>
+              <div style="flex:1"><div style="font-size:15px;font-weight:700;color:#26241e">{{ b.name }}</div><div style="font-size:13px;color:{{ b.statusColor }}">{{ b.statusText }}</div></div>
+              <div onClick="{{ b.onClick }}" style="cursor:pointer">{{ b.button }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:16px;border:1.5px dashed #cfcdc1;border-radius:18px;padding:17px;text-align:center;color:#8a8678;font-size:14px;cursor:pointer">+ Conectar nova instituição</div>
+      </div>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <!-- CATEGORIZE MODAL -->
+  <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;background:rgba(28,31,26,.4);z-index:50;display:flex;align-items:center;justify-content:center;animation:fadeUp .2s ease" onClick="{{ closePicker }}">
+    <div onClick="{{ stop }}" style="background:#f7f6f2;border-radius:22px;padding:26px;width:480px;box-shadow:0 30px 80px -20px rgba(28,31,26,.5)">
+      <div style="font-size:13px;color:#8a8678">{{ pickerTxName }}</div>
+      <div style="font-size:19px;font-weight:800;color:#26241e;margin-bottom:18px">Escolher categoria</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+        <sc-for list="{{ categories }}" as="c" hint-placeholder-count="8">
+          <div onClick="{{ c.onPick }}" style="display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #ecebe3;border-radius:14px;padding:14px;cursor:pointer">
+            <div style="width:34px;height:34px;border-radius:10px;background:{{ c.bg }};display:flex;align-items:center;justify-content:center;font-size:16px">{{ c.icon }}</div>
+            <span style="font-size:14px;font-weight:600;color:#26241e">{{ c.name }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1280, &quot;height&quot;: 800 },
+  &quot;scenario&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Mês tranquilo&quot;, &quot;Mês apertado&quot;, &quot;Mês cheio&quot;], &quot;default&quot;: &quot;Mês tranquilo&quot;, &quot;tsType&quot;: &quot;'Mês tranquilo' | 'Mês apertado' | 'Mês cheio'&quot; },
+  &quot;privacy&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;density&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Compacto&quot;, &quot;Confortável&quot;, &quot;Espaçoso&quot;], &quot;default&quot;: &quot;Confortável&quot;, &quot;tsType&quot;: &quot;'Compacto' | 'Confortável' | 'Espaçoso'&quot; }
+}">
+class Component extends DCLogic {
+  state = {
+    screen: 'dash',
+    picker: null,
+    txFilter: 'all',
+    bankStatus: { nu:'on', it:'on', in:'on', c6:'off', bb:'off' },
+    connecting: null,
+    transactions: [
+      { id:1, name:'iFood', cat:'food',  amount:-64.90,  account:'Conta digital', date:'Hoje' },
+      { id:9, name:'Padaria Aurora', cat:null, amount:-32.50, account:'Conta digital', date:'Hoje' },
+      { id:2, name:'Uber', cat:'transport', amount:-23.40, account:'Conta corrente', date:'Hoje' },
+      { id:3, name:'Salário', cat:'income', amount:8200, account:'Conta corrente', date:'Ontem' },
+      { id:4, name:'Aluguel', cat:'home', amount:-2100, account:'Conta corrente', date:'05 jun' },
+      { id:5, name:'Netflix', cat:'subs', amount:-55.90, account:'Conta digital', date:'04 jun' },
+      { id:6, name:'Drogaria São Paulo', cat:'health', amount:-89.70, account:'Conta digital', date:'03 jun' },
+      { id:7, name:'Posto Shell', cat:'transport', amount:-180, account:'Conta corrente', date:'02 jun' },
+      { id:8, name:'Amazon', cat:'shop', amount:-149.90, account:'Conta digital', date:'01 jun' },
+    ],
+    imports: [
+      { id:'i1', raw:'MERCADOLIVRE*ML12', merchant:'Mercado Livre', amount:-129.90, cat:'shop', status:'pending' },
+      { id:'i2', raw:'PG *SPOTIFY BR', merchant:'Spotify', amount:-21.90, cat:'subs', status:'pending' },
+      { id:'i3', raw:'DROGASIL 0456', merchant:'Drogasil', amount:-47.30, cat:'health', status:'pending' },
+      { id:'i4', raw:'POSTO IPIRANGA SP', merchant:'Posto Ipiranga', amount:-200, cat:'transport', status:'pending' },
+      { id:'i5', raw:'PIX REC JOAO M', merchant:'Pix recebido', amount:-50, cat:'other', status:'pending' },
+    ],
+  };
+
+  CATS = {
+    food:{name:'Alimentação',icon:'🍽',color:'#3f7a55',bg:'#e3eee6'},
+    home:{name:'Moradia',icon:'🏠',color:'#274d36',bg:'#dde9e0'},
+    transport:{name:'Transporte',icon:'🚗',color:'#6aa57f',bg:'#e6f0ea'},
+    leisure:{name:'Lazer',icon:'🎬',color:'#b08968',bg:'#f0e8e0'},
+    health:{name:'Saúde',icon:'🩺',color:'#5a8a9a',bg:'#e3edf0'},
+    shop:{name:'Compras',icon:'🛍',color:'#a0703f',bg:'#f0e7dc'},
+    subs:{name:'Assinaturas',icon:'📺',color:'#7a6f9b',bg:'#ebe8f0'},
+    income:{name:'Entrada',icon:'↘',color:'#3f7a55',bg:'#e3eee6'},
+    other:{name:'Outros',icon:'•',color:'#8a8678',bg:'#eceae2'},
+  };
+
+  go(s){ this.setState({ screen:s }); }
+  connectBank(id){ this.setState({connecting:id}); setTimeout(()=>this.setState(st=>({connecting:null,bankStatus:{...st.bankStatus,[id]:'on'}})),1100); }
+  resolveImport(id,a){ this.setState(st=>({imports:st.imports.map(i=>i.id===id?{...i,status:a?'added':'skipped'}:i)})); }
+  setCat(id,cat){ this.setState(st=>({transactions:st.transactions.map(t=>t.id===id?{...t,cat}:t),picker:null})); }
+  fmt(v){ const neg=v<0; const s=Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); return (neg?'− ':'+ ')+'R$ '+s; }
+
+  renderVals(){
+    const s=this.state, C=this.CATS, screen=s.screen;
+
+    // ===== Tweakable props =====
+    const scenario=this.props.scenario??'Mês tranquilo';
+    const privacy=this.props.privacy??false;
+    const density=this.props.density??'Confortável';
+    const pv=(str)=>(privacy&&/R\$/.test(String(str)))?String(str).replace(/[\d][\d.,]*/g,'••••'):str;
+    const m0=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+    const m2=v=>'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const SCEN={
+      'Mês tranquilo':{patrimonio:64847.90,delta:'↑ 4,2% no mês',deltaColor:'#9ee6b5',entradas:8200,entradasNote:'↑ salário + extras',saidas:5640,saidasNote:'68% do orçamento',saidasColor:'#c2603a',savings:'31%',savingsNote:'R$ 2.560 guardados',savingsColor:'#3f7a55',bdata:[{cat:'food',spent:1840,total:2000},{cat:'home',spent:2100,total:2200},{cat:'transport',spent:920,total:1000},{cat:'leisure',spent:640,total:800},{cat:'shop',spent:300,total:500}],in:[78,82,80,88,84,92],out:[64,70,58,72,66,60],bSpent:5640,bTotal:8300,proj:7980,projColor:'#3f7a55',projNote:'dentro do limite ✓',insight:'Você gastou 14% menos em transporte que em maio. Alimentação subiu R$ 320 — ainda dá para guardar mais.'},
+      'Mês apertado':{patrimonio:61120.40,delta:'↑ 0,6% no mês',deltaColor:'#cfe0d3',entradas:7400,entradasNote:'sem extras este mês',saidas:7060,saidasNote:'91% do orçamento',saidasColor:'#c2603a',savings:'5%',savingsNote:'R$ 340 guardados',savingsColor:'#b07b2e',bdata:[{cat:'food',spent:1980,total:2000},{cat:'home',spent:2180,total:2200},{cat:'transport',spent:980,total:1000},{cat:'leisure',spent:760,total:800},{cat:'shop',spent:480,total:500}],in:[70,74,72,76,73,72],out:[66,70,64,74,71,84],bSpent:7060,bTotal:7760,proj:8420,projColor:'#c2603a',projNote:'pode estourar o limite',insight:'Mês apertado: você já usou 91% do orçamento e faltam 11 dias. Alimentação e transporte estão no limite.'},
+      'Mês cheio':{patrimonio:58940.00,delta:'↓ 1,8% no mês',deltaColor:'#f0b59b',entradas:8200,entradasNote:'↑ salário',saidas:8760,saidasNote:'106% do orçamento',saidasColor:'#c2603a',savings:'−7%',savingsNote:'R$ 560 no vermelho',savingsColor:'#c2603a',bdata:[{cat:'food',spent:2180,total:2000},{cat:'home',spent:2260,total:2200},{cat:'transport',spent:1080,total:1000},{cat:'leisure',spent:880,total:800},{cat:'shop',spent:540,total:500}],in:[72,76,70,74,72,80],out:[70,78,72,82,80,96],bSpent:8760,bTotal:8300,proj:9100,projColor:'#c2603a',projNote:'orçamento estourado',insight:'Alerta: os gastos superaram as entradas em R$ 560. Três orçamentos estouraram — Alimentação, Moradia e Transporte.'}
+    };
+    const SC=SCEN[scenario]||SCEN['Mês tranquilo'];
+    const DENS={'Compacto':{pad:'20px 28px 40px',gap:'12px'},'Confortável':{pad:'30px 36px 50px',gap:'18px'},'Espaçoso':{pad:'46px 54px 64px',gap:'26px'}};
+    const D=DENS[density]||DENS['Confortável'];
+    const kpi={patrimonio:pv(m2(SC.patrimonio)),delta:SC.delta,deltaColor:SC.deltaColor,entradas:pv(m0(SC.entradas)),entradasNote:SC.entradasNote,saidas:pv(m0(SC.saidas)),saidasNote:SC.saidasNote,saidasColor:SC.saidasColor,savings:SC.savings,savingsNote:pv(SC.savingsNote),savingsColor:SC.savingsColor};
+    const _avail=SC.bTotal-SC.bSpent;
+    const budgetHero={spent:pv(m0(SC.bSpent)),total:(privacy?'••••':SC.bTotal.toLocaleString('pt-BR')),pct:Math.min(100,Math.round(SC.bSpent/SC.bTotal*100))+'%',barColor:(SC.bSpent>=SC.bTotal?'#f0b59b':(SC.bSpent/SC.bTotal>=0.9?'#e8c98f':'#9ee6b5')),available:pv(_avail<0?('− R$ '+Math.abs(_avail).toLocaleString('pt-BR')):('R$ '+_avail.toLocaleString('pt-BR'))),availColor:(_avail<0?'#c2603a':'#26241e'),projection:pv(m0(SC.proj)),projColor:SC.projColor,projNote:SC.projNote};
+
+    const navDef=[
+      {key:'dash',label:'Visão geral',icon:'◈'},
+      {key:'tx',label:'Transações',icon:'≡'},
+      {key:'budget',label:'Orçamentos',icon:'◎'},
+      {key:'card',label:'Cartões',icon:'▭'},
+      {key:'invest',label:'Aplicações',icon:'▲'},
+      {key:'loan',label:'Empréstimos',icon:'◳'},
+      {key:'report',label:'Relatórios',icon:'▤'},
+      {key:'import',label:'Revisar importação',icon:'↻'},
+      {key:'connect',label:'Conexões',icon:'🔗'},
+    ];
+    const pendingCount=s.imports.filter(i=>i.status==='pending').length;
+    const nav=navDef.map(n=>{const a=screen===n.key;return{
+      label:n.label,icon:n.icon,onClick:()=>this.go(n.key),
+      color:a?'#fff':'#a7c2b1',weight:a?'700':'500',bg:a?'rgba(255,255,255,.1)':'transparent',
+      iconOpacity:a?'1':'.7',showBadge:n.key==='import'&&pendingCount>0,badge:pendingCount };
+    });
+
+    const titles={dash:['Visão geral','Bem-vinda de volta, Marina'],tx:['Transações','Centralizado automaticamente via Open Finance'],budget:['Orçamentos','Junho 2026'],card:['Cartões','Fatura e limites'],invest:['Aplicações','Sua carteira de investimentos'],loan:['Empréstimos','Saldo devedor e parcelas'],report:['Relatórios','Análise dos últimos 6 meses'],import:['Revisar importação','Confirme as categorias sugeridas'],connect:['Conexões','Open Finance · Banco Central']};
+    const [pageTitle,pageSub]=titles[screen]||titles.dash;
+
+    const accounts=[
+      {id:'nu',name:'Conta digital',kind:'Crédito · débito',balance:'R$ 9.120',letter:'N',color:'#7a3fb8'},
+      {id:'it',name:'Conta corrente',kind:'Salário',balance:'R$ 12.430',letter:'I',color:'#e35728'},
+      {id:'in',name:'Banco Inter',kind:'Aplicações',balance:'R$ 3.297',letter:'B',color:'#f5a623'},
+    ];
+
+    const bankMeta=[
+      {id:'nu',name:'Nubank',letter:'N',color:'#7a3fb8'},
+      {id:'it',name:'Itaú',letter:'I',color:'#e35728'},
+      {id:'in',name:'Banco Inter',letter:'B',color:'#f5a623'},
+      {id:'c6',name:'C6 Bank',letter:'C',color:'#2a2a2a'},
+      {id:'bb',name:'Banco do Brasil',letter:'B',color:'#0a3d91'},
+    ];
+    const banks=bankMeta.map(b=>{
+      const st=s.bankStatus[b.id], connecting=s.connecting===b.id;
+      let statusText,statusColor,button;
+      if(connecting){statusText='Conectando…';statusColor='#8a8678';button=React.createElement('div',{style:{width:18,height:18,border:'2px solid #d6d3c8',borderTopColor:'#3f7a55',borderRadius:'50%',animation:'spin .7s linear infinite'}});}
+      else if(st==='on'){statusText='Conectado · sincronizando';statusColor='#3f7a55';button=React.createElement('span',{style:{fontSize:'13px',fontWeight:700,color:'#3f7a55'}},'Ativo ✓');}
+      else{statusText='Não conectado';statusColor='#a8a499';button=React.createElement('span',{style:{fontSize:'13px',fontWeight:700,color:'#fff',background:'#1f3d2b',padding:'8px 16px',borderRadius:'12px'}},'Conectar');}
+      return{...b,statusText,statusColor,button,onClick:(st==='off'&&!connecting)?(()=>this.connectBank(b.id)):(()=>{})};
+    });
+
+    const mapTx=t=>{const c=t.cat?C[t.cat]:null,uncat=!t.cat;return{...t,
+      icon:c?c.icon:'？',iconBg:uncat?'#fbf0df':c.bg,rowBg:uncat?'#fff7ea':'transparent',
+      catName:uncat?'—':c.name,catColor:uncat?'#b07b2e':c.color,
+      catLabel:uncat?'Categorizar':c.name,catBg:uncat?'#f6e4c5':c.bg,catTextColor:uncat?'#b07b2e':c.color,
+      amount:pv(this.fmt(t.amount)),amountColor:t.amount>0?'#3f7a55':'#26241e',
+      onClick:()=>this.setState({picker:t.id})};};
+
+    const filters=[{key:'all',label:'Tudo'},{key:'uncat',label:'Sem categoria'},{key:'food',label:'🍽 Alimentação'},{key:'transport',label:'🚗 Transporte'},{key:'subs',label:'📺 Assinaturas'}].map(f=>{const a=s.txFilter===f.key;return{label:f.label,onClick:()=>this.setState({txFilter:f.key}),bg:a?'#1f3d2b':'#fff',color:a?'#fff':'#6b6759',border:a?'#1f3d2b':'#e9e7df'};});
+    let txList=s.transactions;
+    if(s.txFilter==='uncat')txList=txList.filter(t=>!t.cat);else if(s.txFilter!=='all')txList=txList.filter(t=>t.cat===s.txFilter);
+    const visibleTx=txList.map(mapTx);
+    const recentTx=s.transactions.slice(0,5).map(mapTx);
+
+    const pendingImports=s.imports.filter(i=>i.status==='pending').map(i=>{const c=C[i.cat];return{...i,catName:c.name,catIcon:c.icon,catBg:c.bg,catTextColor:c.color,amount:this.fmt(i.amount),onApprove:()=>this.resolveImport(i.id,true),onSkip:()=>this.resolveImport(i.id,false)};});
+    const total=s.imports.length,addedCount=s.imports.filter(i=>i.status==='added').length,resolved=total-pendingCount;
+
+    const bdata=SC.bdata;
+    const mkBudget=b=>{const c=C[b.cat],r=b.spent/b.total,over=r>=1,warn=r>=0.9;return{name:c.name,icon:c.icon,spent:'R$ '+b.spent.toLocaleString('pt-BR'),total:'R$ '+b.total.toLocaleString('pt-BR'),pct:Math.min(100,r*100)+'%',barColor:over?'#c2603a':(warn?'#d99a3f':c.color),textColor:over?'#c2603a':(warn?'#b07b2e':'#6b6759')};};
+    const budgets=bdata.map(mkBudget), budgetsMini=bdata.slice(0,3).map(mkBudget);
+
+    const cardTx=[{cat:'shop',name:'Amazon',date:'01 jun',installment:'1/3',amount:'R$ 149,90'},{cat:'food',name:'iFood',date:'31 mai',installment:'à vista',amount:'R$ 64,90'},{cat:'subs',name:'Netflix',date:'30 mai',installment:'à vista',amount:'R$ 55,90'},{cat:'transport',name:'Posto Shell',date:'29 mai',installment:'à vista',amount:'R$ 180,00'}].map(t=>({...t,icon:C[t.cat].icon,catBg:C[t.cat].bg}));
+
+    const investments=[
+      {name:'CDB Liquidez Diária',sub:'Banco Inter · 102% CDI',value:'R$ 12.430',change:'+0,9%',changeColor:'#3f7a55',tag:'CDB',bg:'#e3eee6',fg:'#3f7a55'},
+      {name:'Tesouro Selic 2029',sub:'Renda fixa',value:'R$ 8.900',change:'+0,8%',changeColor:'#3f7a55',tag:'TD',bg:'#e6f0ea',fg:'#3f7a55'},
+      {name:'Ações & ETFs',sub:'Carteira variável',value:'R$ 5.320',change:'+2,1%',changeColor:'#3f7a55',tag:'AÇ',bg:'#ebe8f0',fg:'#7a6f9b'},
+      {name:'Fundos Imobiliários',sub:'4 ativos',value:'R$ 4.440',change:'−0,4%',changeColor:'#c2603a',tag:'FII',bg:'#f0e8e0',fg:'#b08968'},
+    ];
+    const loans=[
+      {name:'Empréstimo pessoal',bank:'Itaú',rate:'2,1% a.m.',remaining:'R$ 13.260',paid:'14/36',monthly:'R$ 612',pct:'39%'},
+      {name:'Financiamento moto',bank:'Banco Inter',rate:'1,8% a.m.',remaining:'R$ 5.140',paid:'18/24',monthly:'R$ 410',pct:'75%'},
+    ];
+
+    const _ml=['jan','fev','mar','abr','mai','jun'];
+    const months=SC.in.map((v,i)=>({label:_ml[i],inH:v+'%',outH:SC.out[i]+'%'}));
+    const reportCats=[{name:'Alimentação',pct:'33%',color:'#3f7a55'},{name:'Moradia',pct:'25%',color:'#274d36'},{name:'Transporte',pct:'22%',color:'#6aa57f'},{name:'Compras',pct:'12%',color:'#b08968'},{name:'Saúde',pct:'8%',color:'#5a8a9a'}];
+
+    const picker=s.picker,pickerTx=s.transactions.find(t=>t.id===picker);
+    const categories=['food','home','transport','leisure','health','shop','subs','other'].map(k=>({name:C[k].name,icon:C[k].icon,bg:C[k].bg,onPick:()=>this.setCat(picker,k)}));
+
+    return {
+      isDash:screen==='dash',isTx:screen==='tx',isBudget:screen==='budget',isCard:screen==='card',
+      isInvest:screen==='invest',isLoan:screen==='loan',isReport:screen==='report',isImport:screen==='import',isConnect:screen==='connect',
+      nav,pageTitle,pageSub,
+      goDash:()=>this.go('dash'),goTx:()=>this.go('tx'),goBudget:()=>this.go('budget'),goImport:()=>this.go('import'),
+      accounts:accounts.map(a=>({...a,balance:pv(a.balance)})),banks,filters,visibleTx,recentTx,budgets,budgetsMini,cardTx:cardTx.map(t=>({...t,amount:pv(t.amount)})),investments:investments.map(iv=>({...iv,value:pv(iv.value)})),loans:loans.map(l=>({...l,remaining:pv(l.remaining),monthly:pv(l.monthly)})),months,reportCats,
+      kpi,ui:{pad:D.pad,gap:D.gap},budgetHero,insight:SC.insight,investTotal:pv(m2(31090)),loanTotal:pv(m2(18400)),cardFatura:pv('R$ 3.214,70'),
+      pendingImports,pendingCount,addedCount,hasPendingImport:pendingCount>0,importDone:pendingCount===0,importProgress:Math.round((resolved/total)*100)+'%',
+      pickerOpen:picker!=null,pickerTxName:pickerTx?pickerTx.name:'',categories,
+      closePicker:()=>this.setState({picker:null}),stop:(e)=>e.stopPropagation(),
+    };
+  }
+}
+</script>
+</body>
+</html>

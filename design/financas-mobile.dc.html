@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#dad7cd;font-family:'Plus Jakarta Sans',sans-serif}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .scrollbody{scrollbar-width:none}
+  .scrollbody::-webkit-scrollbar{display:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;background:radial-gradient(120% 80% at 50% 0%,#e7e5dd 0%,#d3cfc3 100%)">
+
+  <div style="width:390px;height:812px;background:#f7f6f2;border-radius:44px;box-shadow:0 40px 90px -30px rgba(35,40,30,.55),0 0 0 11px #1c1f1a,0 0 0 12px #2c2f28;overflow:hidden;position:relative;display:flex;flex-direction:column">
+
+    <!-- status bar -->
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:14px 30px 4px;font-size:14px;font-weight:700;color:{{ ui.statusColor }};z-index:5">
+      <span>9:41</span>
+      <span style="display:flex;gap:6px;align-items:center;font-size:12px;opacity:.85">▮▮▮ <span style="font-size:14px">⌃</span> 🔋</span>
+    </div>
+
+    <!-- SCROLL BODY -->
+    <div ref="{{ scrollRef }}" class="scrollbody" style="flex:1;overflow-y:auto;overflow-x:hidden">
+
+      <!-- ============ INÍCIO ============ -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:8px 0 28px">
+        <div style="padding:8px 22px 6px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;color:#8a8678">Boa tarde,</div>
+            <div style="font-size:21px;font-weight:800;color:#26241e;letter-spacing:-0.4px">Marina Ribeiro</div>
+          </div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#dfe9df;display:flex;align-items:center;justify-content:center;font-weight:800;color:#3f7a55;font-size:15px">MR</div>
+        </div>
+
+        <!-- balance -->
+        <div style="margin:14px 18px;background:#1f3d2b;border-radius:26px;padding:24px 22px 20px;color:#eef3ee;position:relative;overflow:hidden">
+          <div style="position:absolute;right:-40px;top:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+          <div style="font-size:12px;color:#a9c3b0;letter-spacing:.3px;display:flex;align-items:center;gap:7px">Patrimônio total <span style="font-size:10px;background:rgba(158,230,181,.18);color:#9ee6b5;padding:2px 7px;border-radius:20px;font-weight:600">Open Finance ✓</span></div>
+          <div style="font-size:36px;font-weight:800;letter-spacing:-1.2px;margin:6px 0 14px">R$ 64.847<span style="font-size:21px;opacity:.6">,90</span></div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:rgba(255,255,255,.08);border-radius:15px;padding:11px 13px">
+              <div style="font-size:11px;color:#a9c3b0">Entradas (mês)</div>
+              <div style="font-size:16px;font-weight:700;color:#9ee6b5">+ R$ 8.200</div>
+            </div>
+            <div style="flex:1;background:rgba(255,255,255,.08);border-radius:15px;padding:11px 13px">
+              <div style="font-size:11px;color:#a9c3b0">Saídas (mês)</div>
+              <div style="font-size:16px;font-weight:700;color:#f0c9b0">− R$ 5.640</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- import banner -->
+        <sc-if value="{{ hasPendingImport }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ goImport }}" style="margin:0 18px 6px;background:#fff;border:1px solid #ecdcc6;border-left:4px solid #c98a3f;border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer">
+          <div style="width:34px;height:34px;border-radius:10px;background:#fbf0df;display:flex;align-items:center;justify-content:center;font-size:16px">↻</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#26241e">{{ pendingCount }} transações para revisar</div><div style="font-size:12px;color:#8a8678">Importadas automaticamente</div></div>
+          <span style="font-size:18px;color:#c98a3f">›</span>
+        </div>
+        </sc-if>
+
+        <!-- shortcuts -->
+        <div style="display:flex;gap:11px;padding:10px 18px 4px;overflow-x:auto" class="scrollbody">
+          <div onClick="{{ goConnect }}" style="flex:none;width:78px;background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:13px 8px;text-align:center;cursor:pointer">
+            <div style="font-size:20px">🏦</div><div style="font-size:11px;font-weight:600;color:#3a3833;margin-top:4px">Bancos</div>
+          </div>
+          <div onClick="{{ goCard }}" style="flex:none;width:78px;background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:13px 8px;text-align:center;cursor:pointer">
+            <div style="font-size:20px">💳</div><div style="font-size:11px;font-weight:600;color:#3a3833;margin-top:4px">Cartão</div>
+          </div>
+          <div onClick="{{ goInvest }}" style="flex:none;width:78px;background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:13px 8px;text-align:center;cursor:pointer">
+            <div style="font-size:20px">📈</div><div style="font-size:11px;font-weight:600;color:#3a3833;margin-top:4px">Aplicações</div>
+          </div>
+          <div onClick="{{ goLoan }}" style="flex:none;width:78px;background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:13px 8px;text-align:center;cursor:pointer">
+            <div style="font-size:20px">🏷️</div><div style="font-size:11px;font-weight:600;color:#3a3833;margin-top:4px">Empréstimos</div>
+          </div>
+        </div>
+
+        <!-- contas -->
+        <div style="padding:16px 22px 0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
+            <span style="font-size:15px;font-weight:700;color:#26241e">Contas conectadas</span>
+            <span onClick="{{ goConnect }}" style="font-size:12px;color:#3f7a55;font-weight:700;cursor:pointer">Gerenciar</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <sc-for list="{{ accounts }}" as="acc" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:36px;height:36px;border-radius:12px;background:{{ acc.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">{{ acc.letter }}</div>
+                <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#26241e">{{ acc.name }}</div><div style="font-size:12px;color:#8a8678">{{ acc.kind }}</div></div>
+                <div style="font-size:14px;font-weight:700;color:#26241e">{{ acc.balance }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- gastos -->
+        <div style="padding:20px 22px 4px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <span style="font-size:15px;font-weight:700;color:#26241e">Gastos do mês</span>
+            <span onClick="{{ goReport }}" style="font-size:12px;color:#3f7a55;font-weight:700;cursor:pointer">Ver relatório</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ topCats }}" as="c" hint-placeholder-count="4">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:#3a3833;font-weight:600">{{ c.name }}</span><span class="mono" style="color:#6b6759">{{ c.amount }}</span></div>
+                <div style="height:9px;border-radius:6px;background:#e6e3d8"><div style="width:{{ c.pct }};height:100%;border-radius:6px;background:{{ c.color }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ CONECTAR BANCOS ============ -->
+      <sc-if value="{{ isConnect }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 14px;display:flex;align-items:center;gap:12px">
+          <div onClick="{{ goHome }}" style="cursor:pointer;font-size:22px;color:#3a3833;line-height:1">‹</div>
+          <div><div style="font-size:20px;font-weight:800;color:#26241e">Open Finance</div><div style="font-size:12px;color:#8a8678">Conexões com o Banco Central</div></div>
+        </div>
+        <div style="margin:0 18px 16px;background:#eef3ee;border:1px solid #d7e6da;border-radius:16px;padding:14px;display:flex;gap:11px;align-items:flex-start">
+          <span style="font-size:18px">🔒</span>
+          <div style="font-size:12.5px;line-height:1.5;color:#3f5e4a">Suas conexões são autorizadas via Open Finance regulado pelo BACEN. Você controla o que compartilha e pode revogar a qualquer momento.</div>
+        </div>
+        <div style="padding:0 22px">
+          <div style="font-size:13px;font-weight:700;color:#26241e;margin-bottom:13px">Suas instituições</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <sc-for list="{{ banks }}" as="b" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:14px 15px">
+                <div style="width:40px;height:40px;border-radius:12px;background:{{ b.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">{{ b.letter }}</div>
+                <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#26241e">{{ b.name }}</div><div style="font-size:12px;color:{{ b.statusColor }}">{{ b.statusText }}</div></div>
+                <div onClick="{{ b.onClick }}" style="cursor:pointer">{{ b.button }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px;border:1.5px dashed #cfcdc1;border-radius:18px;padding:16px;text-align:center;color:#8a8678;font-size:13px;cursor:pointer">+ Conectar nova instituição</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ TRANSAÇÕES ============ -->
+      <sc-if value="{{ isTx }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 12px">
+          <div style="font-size:21px;font-weight:800;color:#26241e">Transações</div>
+          <div style="font-size:12px;color:#8a8678">Junho 2026 · centralizado automaticamente</div>
+        </div>
+        <div style="display:flex;gap:8px;padding:0 18px 14px;overflow-x:auto" class="scrollbody">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+            <div onClick="{{ f.onClick }}" style="flex:none;font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:30px;cursor:pointer;background:{{ f.bg }};color:{{ f.color }};border:1px solid {{ f.border }}">{{ f.label }}</div>
+          </sc-for>
+        </div>
+        <div style="padding:0 14px">
+          <sc-for list="{{ visibleTx }}" as="t" hint-placeholder-count="7">
+            <div onClick="{{ t.onClick }}" style="display:flex;align-items:center;gap:12px;padding:11px 10px;border-radius:16px;cursor:pointer;background:{{ t.rowBg }}">
+              <div style="width:40px;height:40px;border-radius:12px;background:{{ t.iconBg }};display:flex;align-items:center;justify-content:center;font-size:17px;flex:none">{{ t.icon }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14px;font-weight:600;color:#26241e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.name }}</div>
+                <div style="display:flex;align-items:center;gap:7px;margin-top:3px">
+                  <span style="font-size:11px;font-weight:600;color:{{ t.catTextColor }};background:{{ t.catBg }};padding:2px 8px;border-radius:20px">{{ t.catLabel }}</span>
+                  <span style="font-size:11px;color:#a8a499">{{ t.account }}</span>
+                </div>
+              </div>
+              <div style="text-align:right;flex:none">
+                <div style="font-size:14px;font-weight:700;color:{{ t.amountColor }}">{{ t.amount }}</div>
+                <div style="font-size:11px;color:#a8a499">{{ t.date }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ IMPORTAÇÃO ============ -->
+      <sc-if value="{{ isImport }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 6px;display:flex;align-items:center;gap:12px">
+          <div onClick="{{ goHome }}" style="cursor:pointer;font-size:22px;color:#3a3833;line-height:1">‹</div>
+          <div><div style="font-size:20px;font-weight:800;color:#26241e">Revisar importação</div><div style="font-size:12px;color:#8a8678">{{ pendingCount }} pendentes · {{ addedCount }} confirmadas</div></div>
+        </div>
+        <div style="margin:10px 18px 16px;height:8px;border-radius:6px;background:#e6e3d8;overflow:hidden"><div style="width:{{ importProgress }};height:100%;background:#3f7a55;border-radius:6px;transition:width .3s"></div></div>
+        <div style="padding:0 18px">
+          <sc-if value="{{ hasPendingImport }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:13px;color:#6b6759;margin-bottom:12px">Confirme a categoria sugerida ou pule. Decisões viram regras automáticas para o futuro.</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ pendingImports }}" as="i" hint-placeholder-count="3">
+                <div style="background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:15px;animation:pop .25s ease">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px">
+                    <div style="flex:1;min-width:0"><div class="mono" style="font-size:12px;color:#8a8678;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ i.raw }}</div><div style="font-size:15px;font-weight:700;color:#26241e;margin-top:2px">{{ i.merchant }}</div></div>
+                    <div style="font-size:16px;font-weight:800;color:#c2603a;margin-left:10px">{{ i.amount }}</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:13px">
+                    <span style="font-size:11px;color:#8a8678">Categoria sugerida:</span>
+                    <span style="font-size:12px;font-weight:600;color:{{ i.catTextColor }};background:{{ i.catBg }};padding:3px 10px;border-radius:20px">{{ i.catIcon }} {{ i.catName }}</span>
+                  </div>
+                  <div style="display:flex;gap:9px">
+                    <div onClick="{{ i.onApprove }}" style="flex:1;text-align:center;background:#1f3d2b;color:#fff;font-size:13px;font-weight:700;padding:11px;border-radius:13px;cursor:pointer">Confirmar</div>
+                    <div onClick="{{ i.onSkip }}" style="flex:none;padding:11px 16px;text-align:center;background:#f0eee6;color:#6b6759;font-size:13px;font-weight:600;border-radius:13px;cursor:pointer">Pular</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ importDone }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:50px 20px;animation:fadeIn .4s ease">
+              <div style="width:72px;height:72px;border-radius:50%;background:#dfe9df;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 18px">✓</div>
+              <div style="font-size:18px;font-weight:800;color:#26241e">Tudo revisado!</div>
+              <div style="font-size:13px;color:#8a8678;margin-top:6px;line-height:1.5">{{ addedCount }} transações categorizadas e adicionadas aos seus gastos.</div>
+              <div onClick="{{ goHome }}" style="display:inline-block;margin-top:22px;background:#1f3d2b;color:#fff;font-size:14px;font-weight:700;padding:12px 26px;border-radius:14px;cursor:pointer">Voltar ao início</div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ ORÇAMENTO ============ -->
+      <sc-if value="{{ isBudget }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 14px">
+          <div style="font-size:21px;font-weight:800;color:#26241e">Orçamentos</div>
+          <div style="font-size:12px;color:#8a8678">Junho 2026</div>
+        </div>
+        <div style="margin:0 18px 18px;background:#1f3d2b;border-radius:22px;padding:20px;color:#eef3ee">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:#a9c3b0">Gasto do orçamento</span><span style="font-size:13px;color:#a9c3b0">68%</span></div>
+          <div style="font-size:28px;font-weight:800;margin:6px 0 12px">R$ 5.640 <span style="font-size:16px;opacity:.6;font-weight:600">/ R$ 8.300</span></div>
+          <div style="height:10px;border-radius:6px;background:rgba(255,255,255,.15)"><div style="width:68%;height:100%;border-radius:6px;background:#9ee6b5"></div></div>
+          <div style="font-size:12px;color:#a9c3b0;margin-top:10px">Restam R$ 2.660 para os próximos 11 dias</div>
+        </div>
+        <div style="padding:0 22px">
+          <div style="display:flex;flex-direction:column;gap:15px">
+            <sc-for list="{{ budgets }}" as="b" hint-placeholder-count="5">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+                  <span style="font-size:14px;font-weight:600;color:#26241e">{{ b.icon }} {{ b.name }}</span>
+                  <span class="mono" style="font-size:12px;color:{{ b.textColor }}">{{ b.spent }} / {{ b.total }}</span>
+                </div>
+                <div style="height:9px;border-radius:6px;background:#e6e3d8;overflow:hidden"><div style="width:{{ b.pct }};height:100%;border-radius:6px;background:{{ b.barColor }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:18px;border:1.5px dashed #cfcdc1;border-radius:18px;padding:15px;text-align:center;color:#8a8678;font-size:13px;cursor:pointer">+ Criar novo orçamento</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ CARTÃO ============ -->
+      <sc-if value="{{ isCard }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 14px;display:flex;align-items:center;gap:12px">
+          <div onClick="{{ goHome }}" style="cursor:pointer;font-size:22px;color:#3a3833;line-height:1">‹</div>
+          <div style="font-size:20px;font-weight:800;color:#26241e">Cartão de crédito</div>
+        </div>
+        <div style="margin:0 18px 18px;height:188px;border-radius:22px;background:linear-gradient(135deg,#274d36,#1a2f22);padding:22px;color:#eef3ee;position:relative;overflow:hidden">
+          <div style="position:absolute;right:-30px;bottom:-50px;width:160px;height:160px;border-radius:50%;background:rgba(158,230,181,.08)"></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#a9c3b0">Fatura atual</span><span style="font-size:13px;color:#a9c3b0">Vence 12/jul</span></div>
+          <div style="font-size:32px;font-weight:800;margin-top:6px">R$ 3.214,70</div>
+          <div style="position:absolute;bottom:22px;left:22px;right:22px">
+            <div style="height:7px;border-radius:5px;background:rgba(255,255,255,.18)"><div style="width:27%;height:100%;border-radius:5px;background:#9ee6b5"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:#a9c3b0"><span>Limite usado</span><span>R$ 3.214 / R$ 12.000</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:11px;padding:0 18px 18px">
+          <div style="flex:1;background:#fff;border:1px solid #ecebe3;border-radius:16px;padding:13px;text-align:center"><div style="font-size:11px;color:#8a8678">Fecha em</div><div style="font-size:15px;font-weight:700;color:#26241e">05/jul</div></div>
+          <div style="flex:1;background:#fff;border:1px solid #ecebe3;border-radius:16px;padding:13px;text-align:center"><div style="font-size:11px;color:#8a8678">Melhor dia</div><div style="font-size:15px;font-weight:700;color:#3f7a55">06</div></div>
+          <div style="flex:1;background:#fff;border:1px solid #ecebe3;border-radius:16px;padding:13px;text-align:center"><div style="font-size:11px;color:#8a8678">Parcelado</div><div style="font-size:15px;font-weight:700;color:#26241e">R$ 890</div></div>
+        </div>
+        <div style="padding:0 22px">
+          <div style="font-size:14px;font-weight:700;color:#26241e;margin-bottom:13px">Lançamentos da fatura</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <sc-for list="{{ cardTx }}" as="t" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:36px;height:36px;border-radius:11px;background:{{ t.catBg }};display:flex;align-items:center;justify-content:center;font-size:15px">{{ t.icon }}</div>
+                <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#26241e">{{ t.name }}</div><div style="font-size:11px;color:#a8a499">{{ t.date }} · {{ t.installment }}</div></div>
+                <div style="font-size:14px;font-weight:700;color:#26241e">{{ t.amount }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ INVESTIMENTOS ============ -->
+      <sc-if value="{{ isInvest }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 14px;display:flex;align-items:center;gap:12px">
+          <div onClick="{{ goHome }}" style="cursor:pointer;font-size:22px;color:#3a3833;line-height:1">‹</div>
+          <div style="font-size:20px;font-weight:800;color:#26241e">Aplicações</div>
+        </div>
+        <div style="margin:0 18px 18px;background:#1f3d2b;border-radius:22px;padding:20px;color:#eef3ee">
+          <div style="font-size:13px;color:#a9c3b0">Total investido</div>
+          <div style="font-size:30px;font-weight:800;margin:5px 0 2px">R$ 31.090,00</div>
+          <div style="font-size:13px;color:#9ee6b5;font-weight:600">+ R$ 372 este mês · +1,2%</div>
+        </div>
+        <div style="padding:0 22px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ investments }}" as="iv" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:15px">
+                <div style="width:40px;height:40px;border-radius:12px;background:{{ iv.bg }};color:{{ iv.fg }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">{{ iv.tag }}</div>
+                <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#26241e">{{ iv.name }}</div><div style="font-size:12px;color:#8a8678">{{ iv.sub }}</div></div>
+                <div style="text-align:right"><div style="font-size:14px;font-weight:700;color:#26241e">{{ iv.value }}</div><div style="font-size:12px;font-weight:600;color:{{ iv.changeColor }}">{{ iv.change }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ EMPRÉSTIMOS ============ -->
+      <sc-if value="{{ isLoan }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 14px;display:flex;align-items:center;gap:12px">
+          <div onClick="{{ goHome }}" style="cursor:pointer;font-size:22px;color:#3a3833;line-height:1">‹</div>
+          <div style="font-size:20px;font-weight:800;color:#26241e">Empréstimos</div>
+        </div>
+        <div style="margin:0 18px 18px;background:#3a2c22;border-radius:22px;padding:20px;color:#f3ece4">
+          <div style="font-size:13px;color:#cbb6a3">Saldo devedor total</div>
+          <div style="font-size:30px;font-weight:800;margin:5px 0 2px">R$ 18.400,00</div>
+          <div style="font-size:13px;color:#e7c3a3;font-weight:600">R$ 612/mês · quitação em mar/2028</div>
+        </div>
+        <div style="padding:0 22px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ loans }}" as="l" hint-placeholder-count="2">
+              <div style="background:#fff;border:1px solid #ecebe3;border-radius:18px;padding:16px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                  <div><div style="font-size:15px;font-weight:700;color:#26241e">{{ l.name }}</div><div style="font-size:12px;color:#8a8678">{{ l.bank }} · {{ l.rate }}</div></div>
+                  <div style="text-align:right"><div style="font-size:15px;font-weight:800;color:#26241e">{{ l.remaining }}</div><div style="font-size:11px;color:#8a8678">restante</div></div>
+                </div>
+                <div style="height:8px;border-radius:5px;background:#e6e3d8;overflow:hidden"><div style="width:{{ l.pct }};height:100%;background:#b08968;border-radius:5px"></div></div>
+                <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:12px;color:#6b6759"><span>{{ l.paid }} pagas</span><span>{{ l.monthly }}/mês</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ RELATÓRIOS ============ -->
+      <sc-if value="{{ isReport }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:6px 0 28px">
+        <div style="padding:10px 22px 14px">
+          <div style="font-size:21px;font-weight:800;color:#26241e">Relatórios</div>
+          <div style="font-size:12px;color:#8a8678">Últimos 6 meses</div>
+        </div>
+        <div style="margin:0 18px 18px;background:#fff;border:1px solid #ecebe3;border-radius:20px;padding:18px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:16px"><span style="font-size:13px;font-weight:700;color:#26241e">Entradas vs Saídas</span><span style="font-size:12px;color:#3f7a55;font-weight:600">Saldo +R$ 15.360</span></div>
+          <div style="display:flex;align-items:flex-end;gap:10px;height:120px">
+            <sc-for list="{{ months }}" as="m" hint-placeholder-count="6">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end">
+                <div style="width:100%;display:flex;gap:3px;align-items:flex-end;height:100%;justify-content:center">
+                  <div style="width:8px;height:{{ m.inH }};background:#3f7a55;border-radius:3px"></div>
+                  <div style="width:8px;height:{{ m.outH }};background:#d9bba6;border-radius:3px"></div>
+                </div>
+                <span style="font-size:10px;color:#a8a499">{{ m.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding:0 22px">
+          <div style="font-size:14px;font-weight:700;color:#26241e;margin-bottom:13px">Por categoria · junho</div>
+          <div style="display:flex;align-items:center;gap:18px;margin-bottom:18px">
+            <div style="width:104px;height:104px;border-radius:50%;flex:none;background:conic-gradient(#3f7a55 0 33%,#274d36 33% 58%,#6aa57f 58% 80%,#b08968 80% 92%,#5a8a9a 92% 100%);display:flex;align-items:center;justify-content:center">
+              <div style="width:62px;height:62px;border-radius:50%;background:#f7f6f2;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:15px;font-weight:800;color:#26241e">R$5,6k</div><div style="font-size:10px;color:#8a8678">total</div></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ reportCats }}" as="c" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:9px;font-size:13px"><span style="width:11px;height:11px;border-radius:50%;background:{{ c.color }}"></span><span style="flex:1;color:#3a3833;font-weight:600">{{ c.name }}</span><span class="mono" style="color:#8a8678;font-size:12px">{{ c.pct }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#eef3ee;border:1px solid #d7e6da;border-radius:18px;padding:15px;display:flex;gap:11px;align-items:flex-start">
+            <span style="font-size:18px">💡</span>
+            <div style="font-size:13px;line-height:1.5;color:#3f5e4a">Você gastou <b>14% menos</b> em transporte que em maio. Alimentação subiu R$ 320 — vale revisar o orçamento.</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div style="flex:none;display:flex;justify-content:space-around;padding:12px 14px 26px;border-top:1px solid #ebe8df;background:#f7f6f2;z-index:5">
+      <div onClick="{{ goHome }}" style="text-align:center;cursor:pointer;color:{{ nav.home }}"><div style="font-size:19px">⌂</div><div style="font-size:10.5px;font-weight:600;margin-top:1px">Início</div></div>
+      <div onClick="{{ goTx }}" style="text-align:center;cursor:pointer;color:{{ nav.tx }}"><div style="font-size:19px">≡</div><div style="font-size:10.5px;font-weight:600;margin-top:1px">Gastos</div></div>
+      <div onClick="{{ goBudget }}" style="text-align:center;cursor:pointer;color:{{ nav.budget }}"><div style="font-size:19px">◎</div><div style="font-size:10.5px;font-weight:600;margin-top:1px">Orçamento</div></div>
+      <div onClick="{{ goReport }}" style="text-align:center;cursor:pointer;color:{{ nav.report }}"><div style="font-size:19px">▤</div><div style="font-size:10.5px;font-weight:600;margin-top:1px">Relatórios</div></div>
+    </div>
+
+    <!-- CATEGORIZE SHEET -->
+    <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(28,31,26,.4);z-index:20;display:flex;flex-direction:column;justify-content:flex-end;animation:fadeIn .2s ease" onClick="{{ closePicker }}">
+      <div onClick="{{ stop }}" style="background:#f7f6f2;border-radius:28px 28px 0 0;padding:20px 20px 30px;animation:sheetUp .28s cubic-bezier(.2,.8,.2,1)">
+        <div style="width:40px;height:4px;border-radius:3px;background:#d6d3c8;margin:0 auto 16px"></div>
+        <div style="font-size:12px;color:#8a8678">{{ pickerTxName }}</div>
+        <div style="font-size:17px;font-weight:800;color:#26241e;margin-bottom:16px">Escolher categoria</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <sc-for list="{{ categories }}" as="c" hint-placeholder-count="6">
+            <div onClick="{{ c.onPick }}" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ecebe3;border-radius:15px;padding:13px;cursor:pointer">
+              <div style="width:32px;height:32px;border-radius:10px;background:{{ c.bg }};display:flex;align-items:center;justify-content:center;font-size:15px">{{ c.icon }}</div>
+              <span style="font-size:13px;font-weight:600;color:#26241e">{{ c.name }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  scrollRef = React.createRef();
+
+  state = {
+    screen: 'home',
+    picker: null,            // tx id being categorized
+    txFilter: 'all',
+    accounts: [
+      { id:'nu', name:'Conta digital', kind:'Crédito · débito', balance:'R$ 9.120', letter:'N', color:'#7a3fb8' },
+      { id:'it', name:'Conta corrente', kind:'Salário', balance:'R$ 12.430', letter:'I', color:'#e35728' },
+      { id:'in', name:'Conta + investe', kind:'Aplicações', balance:'R$ 3.297', letter:'B', color:'#f5a623' },
+    ],
+    bankStatus: { nu:'on', it:'on', in:'on', c6:'off', bb:'off' },
+    connecting: null,
+    transactions: [
+      { id:1, name:'iFood', cat:'food',  amount:-64.90,  account:'Conta digital', date:'Hoje' },
+      { id:9, name:'Padaria Aurora', cat:null, amount:-32.50, account:'Conta digital', date:'Hoje' },
+      { id:2, name:'Uber', cat:'transport', amount:-23.40, account:'Conta corrente', date:'Hoje' },
+      { id:3, name:'Salário', cat:'income', amount:8200, account:'Conta corrente', date:'Ontem' },
+      { id:4, name:'Aluguel', cat:'home', amount:-2100, account:'Conta corrente', date:'05 jun' },
+      { id:5, name:'Netflix', cat:'subs', amount:-55.90, account:'Conta digital', date:'04 jun' },
+      { id:6, name:'Drogaria São Paulo', cat:'health', amount:-89.70, account:'Conta digital', date:'03 jun' },
+      { id:7, name:'Posto Shell', cat:'transport', amount:-180, account:'Conta corrente', date:'02 jun' },
+      { id:8, name:'Amazon', cat:'shop', amount:-149.90, account:'Conta digital', date:'01 jun' },
+    ],
+    imports: [
+      { id:'i1', raw:'MERCADOLIVRE*ML12', merchant:'Mercado Livre', amount:-129.90, cat:'shop', status:'pending' },
+      { id:'i2', raw:'PG *SPOTIFY BR', merchant:'Spotify', amount:-21.90, cat:'subs', status:'pending' },
+      { id:'i3', raw:'DROGASIL 0456', merchant:'Drogasil', amount:-47.30, cat:'health', status:'pending' },
+      { id:'i4', raw:'POSTO IPIRANGA SP', merchant:'Posto Ipiranga', amount:-200, cat:'transport', status:'pending' },
+      { id:'i5', raw:'PIX REC JOAO M', merchant:'Pix recebido', amount:-50, cat:'other', status:'pending' },
+    ],
+  };
+
+  CATS = {
+    food:      { name:'Alimentação', icon:'🍽', color:'#3f7a55', bg:'#e3eee6' },
+    home:      { name:'Moradia',     icon:'🏠', color:'#274d36', bg:'#dde9e0' },
+    transport: { name:'Transporte',  icon:'🚗', color:'#6aa57f', bg:'#e6f0ea' },
+    leisure:   { name:'Lazer',       icon:'🎬', color:'#b08968', bg:'#f0e8e0' },
+    health:    { name:'Saúde',       icon:'🩺', color:'#5a8a9a', bg:'#e3edf0' },
+    shop:      { name:'Compras',     icon:'🛍', color:'#a0703f', bg:'#f0e7dc' },
+    subs:      { name:'Assinaturas', icon:'📺', color:'#7a6f9b', bg:'#ebe8f0' },
+    income:    { name:'Entrada',     icon:'↘', color:'#3f7a55', bg:'#e3eee6' },
+    other:     { name:'Outros',      icon:'•', color:'#8a8678', bg:'#eceae2' },
+  };
+
+  go(s){ this.setState({ screen:s }, () => { if(this.scrollRef.current) this.scrollRef.current.scrollTop = 0; }); }
+
+  connectBank(id){
+    this.setState({ connecting:id });
+    setTimeout(() => {
+      this.setState(st => ({ connecting:null, bankStatus:{ ...st.bankStatus, [id]:'on' } }));
+    }, 1100);
+  }
+
+  resolveImport(id, approve){
+    this.setState(st => ({
+      imports: st.imports.map(i => i.id===id ? { ...i, status: approve?'added':'skipped' } : i)
+    }));
+  }
+
+  setCat(id, cat){
+    this.setState(st => ({
+      transactions: st.transactions.map(t => t.id===id ? { ...t, cat } : t),
+      picker:null
+    }));
+  }
+
+  fmt(v){
+    const neg = v < 0;
+    const s = Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return (neg?'− ':'+ ')+'R$ '+s;
+  }
+
+  renderVals(){
+    const s = this.state, C = this.CATS;
+    const screen = s.screen;
+    const navColor = k => screen===k ? '#3f7a55' : '#b3afa2';
+
+    // banks
+    const bankMeta = [
+      { id:'nu', name:'Nubank',        letter:'N', color:'#7a3fb8' },
+      { id:'it', name:'Itaú',          letter:'I', color:'#e35728' },
+      { id:'in', name:'Banco Inter',   letter:'B', color:'#f5a623' },
+      { id:'c6', name:'C6 Bank',       letter:'C', color:'#2a2a2a' },
+      { id:'bb', name:'Banco do Brasil',letter:'B', color:'#0a3d91' },
+    ];
+    const banks = bankMeta.map(b => {
+      const st = s.bankStatus[b.id];
+      const connecting = s.connecting===b.id;
+      let statusText, statusColor, button;
+      if(connecting){ statusText='Conectando…'; statusColor='#8a8678';
+        button = React.createElement('div',{style:{width:18,height:18,border:'2px solid #d6d3c8',borderTopColor:'#3f7a55',borderRadius:'50%',animation:'spin .7s linear infinite'}}); }
+      else if(st==='on'){ statusText='Conectado · sincronizando'; statusColor='#3f7a55';
+        button = React.createElement('span',{style:{fontSize:'13px',fontWeight:700,color:'#3f7a55'}},'Ativo ✓'); }
+      else { statusText='Não conectado'; statusColor='#a8a499';
+        button = React.createElement('span',{style:{fontSize:'13px',fontWeight:700,color:'#fff',background:'#1f3d2b',padding:'7px 14px',borderRadius:'12px'}},'Conectar'); }
+      return { ...b, statusText, statusColor, button, onClick: (st==='off'&&!connecting)?(()=>this.connectBank(b.id)):(()=>{}) };
+    });
+
+    // transactions
+    const filters = [
+      { key:'all', label:'Tudo' },
+      { key:'uncat', label:'Sem categoria' },
+      { key:'food', label:'🍽 Alimentação' },
+      { key:'transport', label:'🚗 Transporte' },
+      { key:'subs', label:'📺 Assinaturas' },
+    ].map(f => {
+      const active = s.txFilter===f.key;
+      return { label:f.label, onClick:()=>this.setState({txFilter:f.key}),
+        bg: active?'#1f3d2b':'#fff', color: active?'#fff':'#6b6759', border: active?'#1f3d2b':'#e9e7df' };
+    });
+    let txList = s.transactions;
+    if(s.txFilter==='uncat') txList = txList.filter(t=>!t.cat);
+    else if(s.txFilter!=='all') txList = txList.filter(t=>t.cat===s.txFilter);
+    const visibleTx = txList.map(t => {
+      const c = t.cat ? C[t.cat] : null;
+      const uncat = !t.cat;
+      return {
+        ...t,
+        icon: c ? c.icon : '？',
+        iconBg: uncat ? '#fbf0df' : c.bg,
+        rowBg: uncat ? '#fff7ea' : 'transparent',
+        catLabel: uncat ? 'Categorizar' : c.name,
+        catBg: uncat ? '#f6e4c5' : c.bg,
+        catTextColor: uncat ? '#b07b2e' : c.color,
+        amount: this.fmt(t.amount),
+        amountColor: t.amount>0 ? '#3f7a55' : '#26241e',
+        onClick: ()=>this.setState({picker:t.id}),
+      };
+    });
+
+    // imports
+    const pendingImports = s.imports.filter(i=>i.status==='pending').map(i => {
+      const c = C[i.cat];
+      return { ...i, catName:c.name, catIcon:c.icon, catBg:c.bg, catTextColor:c.color,
+        amount:this.fmt(i.amount),
+        onApprove:()=>this.resolveImport(i.id,true), onSkip:()=>this.resolveImport(i.id,false) };
+    });
+    const total = s.imports.length;
+    const pendingCount = s.imports.filter(i=>i.status==='pending').length;
+    const addedCount = s.imports.filter(i=>i.status==='added').length;
+    const resolved = total - pendingCount;
+
+    // budgets
+    const bdata = [
+      { cat:'food', spent:1840, total:2000 },
+      { cat:'home', spent:2100, total:2200 },
+      { cat:'transport', spent:920, total:1000 },
+      { cat:'leisure', spent:640, total:800 },
+      { cat:'shop', spent:300, total:500 },
+    ];
+    const budgets = bdata.map(b => {
+      const c = C[b.cat];
+      const ratio = b.spent/b.total;
+      const over = ratio>=1, warn = ratio>=0.9;
+      return { name:c.name, icon:c.icon,
+        spent:'R$ '+b.spent.toLocaleString('pt-BR'), total:'R$ '+b.total.toLocaleString('pt-BR'),
+        pct: Math.min(100,ratio*100)+'%',
+        barColor: over?'#c2603a':(warn?'#d99a3f':c.color),
+        textColor: over?'#c2603a':(warn?'#b07b2e':'#6b6759') };
+    });
+
+    // card
+    const cardTx = [
+      { cat:'shop', name:'Amazon', date:'01 jun', installment:'1/3', amount:'R$ 149,90' },
+      { cat:'food', name:'iFood', date:'31 mai', installment:'à vista', amount:'R$ 64,90' },
+      { cat:'subs', name:'Netflix', date:'30 mai', installment:'à vista', amount:'R$ 55,90' },
+      { cat:'transport', name:'Posto Shell', date:'29 mai', installment:'à vista', amount:'R$ 180,00' },
+    ].map(t => ({ ...t, icon:C[t.cat].icon, catBg:C[t.cat].bg }));
+
+    // investments
+    const investments = [
+      { name:'CDB Liquidez Diária', sub:'Banco Inter · 102% CDI', value:'R$ 12.430', change:'+0,9%', changeColor:'#3f7a55', tag:'CDB', bg:'#e3eee6', fg:'#3f7a55' },
+      { name:'Tesouro Selic 2029', sub:'Renda fixa', value:'R$ 8.900', change:'+0,8%', changeColor:'#3f7a55', tag:'TD', bg:'#e6f0ea', fg:'#3f7a55' },
+      { name:'Ações & ETFs', sub:'Carteira variável', value:'R$ 5.320', change:'+2,1%', changeColor:'#3f7a55', tag:'AÇ', bg:'#ebe8f0', fg:'#7a6f9b' },
+      { name:'Fundos Imobiliários', sub:'4 ativos', value:'R$ 4.440', change:'−0,4%', changeColor:'#c2603a', tag:'FII', bg:'#f0e8e0', fg:'#b08968' },
+    ];
+
+    // loans
+    const loans = [
+      { name:'Empréstimo pessoal', bank:'Itaú', rate:'2,1% a.m.', remaining:'R$ 13.260', paid:'14/36', monthly:'R$ 612', pct:'39%' },
+      { name:'Financiamento moto', bank:'Banco Inter', rate:'1,8% a.m.', remaining:'R$ 5.140', paid:'18/24', monthly:'R$ 410', pct:'75%' },
+    ];
+
+    // report
+    const md = [
+      { label:'jan', inH:78, outH:64 },{ label:'fev', inH:82, outH:70 },
+      { label:'mar', inH:80, outH:58 },{ label:'abr', inH:88, outH:72 },
+      { label:'mai', inH:84, outH:66 },{ label:'jun', inH:92, outH:60 },
+    ];
+    const months = md.map(m => ({ label:m.label, inH:m.inH+'%', outH:m.outH+'%' }));
+    const reportCats = [
+      { name:'Alimentação', pct:'33%', color:'#3f7a55' },
+      { name:'Moradia', pct:'25%', color:'#274d36' },
+      { name:'Transporte', pct:'22%', color:'#6aa57f' },
+      { name:'Compras', pct:'12%', color:'#b08968' },
+      { name:'Saúde', pct:'8%', color:'#5a8a9a' },
+    ];
+
+    // top cats for home
+    const topCats = [
+      { name:'Alimentação', amount:'R$ 1.840', pct:'74%', color:'#3f7a55' },
+      { name:'Moradia', amount:'R$ 2.100', pct:'88%', color:'#274d36' },
+      { name:'Transporte', amount:'R$ 920', pct:'42%', color:'#6aa57f' },
+      { name:'Assinaturas', amount:'R$ 380', pct:'22%', color:'#7a6f9b' },
+    ];
+
+    // picker
+    const picker = s.picker;
+    const pickerTx = s.transactions.find(t=>t.id===picker);
+    const categories = ['food','home','transport','leisure','health','shop','subs','other'].map(k => ({
+      name:C[k].name, icon:C[k].icon, bg:C[k].bg, onPick:()=>this.setCat(picker,k)
+    }));
+
+    return {
+      isHome:screen==='home', isConnect:screen==='connect', isTx:screen==='tx',
+      isImport:screen==='import', isBudget:screen==='budget', isCard:screen==='card',
+      isInvest:screen==='invest', isLoan:screen==='loan', isReport:screen==='report',
+      ui:{ statusColor: '#26241e' },
+      nav:{ home:navColor('home'), tx:navColor('tx'), budget:navColor('budget'), report:navColor('report') },
+      goHome:()=>this.go('home'), goConnect:()=>this.go('connect'), goTx:()=>this.go('tx'),
+      goImport:()=>this.go('import'), goBudget:()=>this.go('budget'), goCard:()=>this.go('card'),
+      goInvest:()=>this.go('invest'), goLoan:()=>this.go('loan'), goReport:()=>this.go('report'),
+      accounts:s.accounts, banks, filters, visibleTx,
+      topCats, budgets, cardTx, investments, loans, months, reportCats,
+      pendingImports, pendingCount, addedCount,
+      hasPendingImport: pendingCount>0, importDone: pendingCount===0,
+      importProgress: Math.round((resolved/total)*100)+'%',
+      pickerOpen: picker!=null, pickerTxName: pickerTx?pickerTx.name:'', categories,
+      closePicker:()=>this.setState({picker:null}), stop:(e)=>e.stopPropagation(),
+    };
+  }
+}
+</script>
+</body>
+</html>
