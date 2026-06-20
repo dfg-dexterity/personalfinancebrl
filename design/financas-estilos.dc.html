@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#e7e5df}
+  .mono{font-family:'IBM Plex Mono',monospace}
+</style>
+</helmet>
+
+<div style="width:max-content;min-width:100%;min-height:100vh;box-sizing:border-box;padding:56px 48px;background:#e7e5df;font-family:'Plus Jakarta Sans',sans-serif">
+
+  <div style="margin-bottom:40px;max-width:760px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#8a8678;margin-bottom:10px">Exploração de estilo · App de despesas</div>
+    <h1 style="font-size:30px;font-weight:800;color:#26241e;letter-spacing:-0.5px;margin-bottom:8px">Três direções para o dashboard</h1>
+    <p style="font-size:15px;line-height:1.55;color:#6b6759">Mesma tela inicial — saldo, contas conectadas via Open Finance e gastos por categoria — em três personalidades visuais. Escolha uma (ou misture elementos) e eu construo o protótipo clicável completo com todas as telas.</p>
+  </div>
+
+  <div style="display:flex;gap:48px;align-items:flex-start">
+
+    <!-- ============ DIREÇÃO 1 — SERENO ============ -->
+    <div style="flex:none;width:360px">
+      <div style="margin-bottom:14px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8a8678;margin-bottom:4px">Opção 01</div>
+        <div style="font-size:17px;font-weight:700;color:#26241e">Sereno</div>
+        <div style="font-size:13px;color:#6b6759;margin-top:2px">Banco digital · claro, calmo, verde</div>
+      </div>
+
+      <div style="background:#f7f6f2;border-radius:34px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(40,38,30,.35);border:1px solid #e9e7df;font-family:'Plus Jakarta Sans',sans-serif">
+        <!-- status bar -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;font-size:13px;font-weight:600;color:#26241e">
+          <span>9:41</span>
+          <span style="display:flex;gap:5px;align-items:center"><span style="opacity:.7">▮▮▮</span><span style="opacity:.7">⌃</span><span>🔋</span></span>
+        </div>
+        <!-- header -->
+        <div style="padding:14px 22px 6px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;color:#8a8678">Boa tarde,</div>
+            <div style="font-size:20px;font-weight:700;color:#26241e;letter-spacing:-0.3px">Marina</div>
+          </div>
+          <div style="width:42px;height:42px;border-radius:50%;background:#dfe9df;display:flex;align-items:center;justify-content:center;font-weight:700;color:#3f7a55">MR</div>
+        </div>
+        <!-- balance -->
+        <div style="margin:14px 18px;background:#1f3d2b;border-radius:24px;padding:22px 22px 20px;color:#eef3ee">
+          <div style="font-size:12px;color:#a9c3b0;letter-spacing:.3px">Saldo total · 4 contas</div>
+          <div style="font-size:33px;font-weight:800;letter-spacing:-1px;margin:4px 0 12px">R$ 24.847<span style="font-size:20px;opacity:.7">,90</span></div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:rgba(255,255,255,.08);border-radius:14px;padding:10px 12px">
+              <div style="font-size:11px;color:#a9c3b0">Entradas</div>
+              <div style="font-size:15px;font-weight:700;color:#9ee6b5">R$ 8.200</div>
+            </div>
+            <div style="flex:1;background:rgba(255,255,255,.08);border-radius:14px;padding:10px 12px">
+              <div style="font-size:11px;color:#a9c3b0">Saídas</div>
+              <div style="font-size:15px;font-weight:700;color:#f0c9b0">R$ 5.640</div>
+            </div>
+          </div>
+        </div>
+        <!-- contas -->
+        <div style="padding:4px 22px 0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-size:14px;font-weight:700;color:#26241e">Contas conectadas</span>
+            <span style="font-size:12px;color:#3f7a55;font-weight:600">Open Finance ✓</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:34px;height:34px;border-radius:11px;background:#7a3fb8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">N</div>
+              <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#26241e">Conta digital</div><div style="font-size:12px;color:#8a8678">Crédito · débito</div></div>
+              <div style="font-size:14px;font-weight:700;color:#26241e">R$ 9.120</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:34px;height:34px;border-radius:11px;background:#e35728;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">I</div>
+              <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#26241e">Conta corrente</div><div style="font-size:12px;color:#8a8678">Salário</div></div>
+              <div style="font-size:14px;font-weight:700;color:#26241e">R$ 12.430</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:34px;height:34px;border-radius:11px;background:#f5a623;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">B</div>
+              <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#26241e">CDB + Tesouro</div><div style="font-size:12px;color:#8a8678">Aplicações</div></div>
+              <div style="font-size:14px;font-weight:700;color:#26241e">R$ 3.297</div>
+            </div>
+          </div>
+        </div>
+        <!-- categorias -->
+        <div style="padding:18px 22px 10px">
+          <div style="font-size:14px;font-weight:700;color:#26241e;margin-bottom:13px">Gastos do mês</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="color:#3a3833;font-weight:600">Alimentação</span><span class="mono" style="color:#6b6759">R$ 1.840</span></div>
+              <div style="height:8px;border-radius:6px;background:#e6e3d8"><div style="width:74%;height:100%;border-radius:6px;background:#3f7a55"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="color:#3a3833;font-weight:600">Transporte</span><span class="mono" style="color:#6b6759">R$ 920</span></div>
+              <div style="height:8px;border-radius:6px;background:#e6e3d8"><div style="width:42%;height:100%;border-radius:6px;background:#6aa57f"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="color:#3a3833;font-weight:600">Moradia</span><span class="mono" style="color:#6b6759">R$ 2.100</span></div>
+              <div style="height:8px;border-radius:6px;background:#e6e3d8"><div style="width:88%;height:100%;border-radius:6px;background:#274d36"></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- nav -->
+        <div style="display:flex;justify-content:space-around;padding:14px 18px 22px;border-top:1px solid #ebe8df;margin-top:8px">
+          <div style="text-align:center;color:#3f7a55"><div style="font-size:18px">●</div><div style="font-size:11px;font-weight:600">Início</div></div>
+          <div style="text-align:center;color:#b3afa2"><div style="font-size:18px">◍</div><div style="font-size:11px">Gastos</div></div>
+          <div style="text-align:center;color:#b3afa2"><div style="font-size:18px">▱</div><div style="font-size:11px">Orçamento</div></div>
+          <div style="text-align:center;color:#b3afa2"><div style="font-size:18px">▤</div><div style="font-size:11px">Relatórios</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DIREÇÃO 2 — COCKPIT ============ -->
+    <div style="flex:none;width:360px">
+      <div style="margin-bottom:14px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8a8678;margin-bottom:4px">Opção 02</div>
+        <div style="font-size:17px;font-weight:700;color:#26241e">Cockpit</div>
+        <div style="font-size:13px;color:#6b6759;margin-top:2px">Dashboard pro · escuro, denso, violeta</div>
+      </div>
+
+      <div style="background:#15161c;border-radius:34px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(20,20,30,.5);border:1px solid #25262f;font-family:'Space Grotesk',sans-serif">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;font-size:13px;font-weight:600;color:#e6e6ee">
+          <span>9:41</span>
+          <span style="opacity:.6">▮▮▮ ⌃ 🔋</span>
+        </div>
+        <div style="padding:14px 22px 6px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:12px;color:#7c7d8c;font-family:'IBM Plex Mono',monospace">PATRIMÔNIO LÍQUIDO</div>
+            <div style="font-size:30px;font-weight:700;color:#fff;letter-spacing:-0.5px">R$ 24.847,90</div>
+          </div>
+          <div style="width:40px;height:40px;border-radius:12px;background:#2a2b36;border:1px solid #3a3b48;display:flex;align-items:center;justify-content:center;color:#a78bfa">⌘</div>
+        </div>
+        <!-- sparkline strip -->
+        <div style="margin:12px 18px;background:#1c1d26;border:1px solid #2a2b36;border-radius:18px;padding:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+            <div><div style="font-size:11px;color:#7c7d8c;font-family:'IBM Plex Mono',monospace">FLUXO 30D</div><div style="font-size:18px;font-weight:700;color:#7ee0a8">+ R$ 2.560</div></div>
+            <div style="text-align:right"><div style="font-size:11px;color:#7c7d8c;font-family:'IBM Plex Mono',monospace">TAXA POUP.</div><div style="font-size:18px;font-weight:700;color:#a78bfa">31%</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:4px;height:46px">
+            <div style="flex:1;height:40%;background:#3a3b48;border-radius:3px"></div>
+            <div style="flex:1;height:62%;background:#3a3b48;border-radius:3px"></div>
+            <div style="flex:1;height:48%;background:#3a3b48;border-radius:3px"></div>
+            <div style="flex:1;height:78%;background:#7c5cd6;border-radius:3px"></div>
+            <div style="flex:1;height:55%;background:#3a3b48;border-radius:3px"></div>
+            <div style="flex:1;height:90%;background:#a78bfa;border-radius:3px"></div>
+            <div style="flex:1;height:70%;background:#3a3b48;border-radius:3px"></div>
+            <div style="flex:1;height:100%;background:#7c5cd6;border-radius:3px"></div>
+          </div>
+        </div>
+        <!-- metric grid -->
+        <div style="padding:2px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:#1c1d26;border:1px solid #2a2b36;border-radius:16px;padding:13px 14px">
+            <div style="font-size:11px;color:#7c7d8c;font-family:'IBM Plex Mono',monospace">CARTÃO</div>
+            <div style="font-size:17px;font-weight:700;color:#fff">R$ 3.214</div>
+            <div style="font-size:11px;color:#f0a07a">vence 12/jul</div>
+          </div>
+          <div style="background:#1c1d26;border:1px solid #2a2b36;border-radius:16px;padding:13px 14px">
+            <div style="font-size:11px;color:#7c7d8c;font-family:'IBM Plex Mono',monospace">EMPRÉSTIMOS</div>
+            <div style="font-size:17px;font-weight:700;color:#fff">R$ 18.400</div>
+            <div style="font-size:11px;color:#7c7d8c">22 parcelas</div>
+          </div>
+          <div style="background:#1c1d26;border:1px solid #2a2b36;border-radius:16px;padding:13px 14px">
+            <div style="font-size:11px;color:#7c7d8c;font-family:'IBM Plex Mono',monospace">APLICAÇÕES</div>
+            <div style="font-size:17px;font-weight:700;color:#7ee0a8">R$ 31.090</div>
+            <div style="font-size:11px;color:#7ee0a8">+1,2% mês</div>
+          </div>
+          <div style="background:#1c1d26;border:1px solid #2a2b36;border-radius:16px;padding:13px 14px">
+            <div style="font-size:11px;color:#7c7d8c;font-family:'IBM Plex Mono',monospace">ORÇAMENTO</div>
+            <div style="font-size:17px;font-weight:700;color:#fff">68%</div>
+            <div style="font-size:11px;color:#7c7d8c">R$ 5.640 / 8.300</div>
+          </div>
+        </div>
+        <!-- transações -->
+        <div style="padding:16px 22px 4px">
+          <div style="font-size:13px;font-weight:600;color:#e6e6ee;margin-bottom:11px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px">ÚLTIMAS TRANSAÇÕES</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:11px">
+              <div style="width:30px;height:30px;border-radius:9px;background:#2a2b36;display:flex;align-items:center;justify-content:center;font-size:13px">🍽</div>
+              <div style="flex:1"><div style="font-size:13px;color:#e6e6ee;font-weight:500">iFood</div><div style="font-size:11px;color:#7c7d8c">Alimentação</div></div>
+              <div style="font-size:13px;color:#f0a07a;font-weight:600">-R$ 64,90</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:11px">
+              <div style="width:30px;height:30px;border-radius:9px;background:#2a2b36;display:flex;align-items:center;justify-content:center;font-size:13px">⚡</div>
+              <div style="flex:1"><div style="font-size:13px;color:#e6e6ee;font-weight:500">Energia</div><div style="font-size:11px;color:#7c7d8c">Moradia · auto</div></div>
+              <div style="font-size:13px;color:#f0a07a;font-weight:600">-R$ 218,40</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:11px">
+              <div style="width:30px;height:30px;border-radius:9px;background:#2a2b36;display:flex;align-items:center;justify-content:center;font-size:13px">↘</div>
+              <div style="flex:1"><div style="font-size:13px;color:#e6e6ee;font-weight:500">Salário</div><div style="font-size:11px;color:#7c7d8c">Entrada</div></div>
+              <div style="font-size:13px;color:#7ee0a8;font-weight:600">+R$ 8.200</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-around;padding:14px 18px 22px;border-top:1px solid #25262f;margin-top:12px">
+          <div style="text-align:center;color:#a78bfa"><div style="font-size:16px">◆</div><div style="font-size:10px;font-family:'IBM Plex Mono',monospace">HOME</div></div>
+          <div style="text-align:center;color:#5d5e6b"><div style="font-size:16px">◇</div><div style="font-size:10px;font-family:'IBM Plex Mono',monospace">GASTOS</div></div>
+          <div style="text-align:center;color:#5d5e6b"><div style="font-size:16px">◇</div><div style="font-size:10px;font-family:'IBM Plex Mono',monospace">METAS</div></div>
+          <div style="text-align:center;color:#5d5e6b"><div style="font-size:16px">◇</div><div style="font-size:10px;font-family:'IBM Plex Mono',monospace">DADOS</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DIREÇÃO 3 — AMIGÁVEL ============ -->
+    <div style="flex:none;width:360px">
+      <div style="margin-bottom:14px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8a8678;margin-bottom:4px">Opção 03</div>
+        <div style="font-size:17px;font-weight:700;color:#26241e">Aconchego</div>
+        <div style="font-size:13px;color:#6b6759;margin-top:2px">Fintech amigável · creme, arredondado, coral</div>
+      </div>
+
+      <div style="background:#fdf6ec;border-radius:34px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(60,40,20,.3);border:1px solid #f2e7d4;font-family:'Bricolage Grotesque',sans-serif">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;font-size:13px;font-weight:600;color:#3a2e1f">
+          <span>9:41</span>
+          <span style="opacity:.6">▮▮▮ ⌃ 🔋</span>
+        </div>
+        <div style="padding:16px 22px 4px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:14px;color:#a08862">Oi, Marina 👋</div>
+            <div style="font-size:21px;font-weight:700;color:#3a2e1f">Tudo sob controle</div>
+          </div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#f4825c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">M</div>
+        </div>
+        <!-- balance bubble -->
+        <div style="margin:14px 18px;background:#f4825c;border-radius:28px;padding:22px;color:#fff;position:relative;overflow:hidden">
+          <div style="position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.12)"></div>
+          <div style="position:absolute;right:20px;bottom:-40px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.1)"></div>
+          <div style="font-size:13px;color:#ffe2d6">Você tem disponível</div>
+          <div style="font-size:34px;font-weight:800;letter-spacing:-1px;margin:2px 0 14px">R$ 24.847,90</div>
+          <div style="display:inline-flex;gap:7px;align-items:center;background:rgba(255,255,255,.18);padding:6px 13px;border-radius:30px;font-size:13px;font-weight:600">↑ R$ 2.560 economizados este mês</div>
+        </div>
+        <!-- quick chips -->
+        <div style="padding:4px 18px;display:flex;gap:10px">
+          <div style="flex:1;background:#fff;border:1.5px solid #f2e7d4;border-radius:20px;padding:14px;text-align:center">
+            <div style="font-size:22px">🏦</div>
+            <div style="font-size:12px;font-weight:600;color:#3a2e1f;margin-top:3px">4 bancos</div>
+            <div style="font-size:11px;color:#a08862">conectados</div>
+          </div>
+          <div style="flex:1;background:#fff;border:1.5px solid #f2e7d4;border-radius:20px;padding:14px;text-align:center">
+            <div style="font-size:22px">💳</div>
+            <div style="font-size:12px;font-weight:600;color:#3a2e1f;margin-top:3px">R$ 3.214</div>
+            <div style="font-size:11px;color:#a08862">fatura</div>
+          </div>
+          <div style="flex:1;background:#fff;border:1.5px solid #f2e7d4;border-radius:20px;padding:14px;text-align:center">
+            <div style="font-size:22px">🎯</div>
+            <div style="font-size:12px;font-weight:600;color:#3a2e1f;margin-top:3px">68%</div>
+            <div style="font-size:11px;color:#a08862">orçamento</div>
+          </div>
+        </div>
+        <!-- categorias donut-ish -->
+        <div style="padding:18px 22px 8px">
+          <div style="font-size:15px;font-weight:700;color:#3a2e1f;margin-bottom:14px">Para onde foi seu dinheiro</div>
+          <div style="display:flex;align-items:center;gap:18px">
+            <div style="width:96px;height:96px;border-radius:50%;flex:none;background:conic-gradient(#f4825c 0 33%,#f0b429 33% 58%,#5aa897 58% 80%,#9b7ede 80% 100%);display:flex;align-items:center;justify-content:center">
+              <div style="width:58px;height:58px;border-radius:50%;background:#fdf6ec;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:15px;font-weight:800;color:#3a2e1f">R$5,6k</div><div style="font-size:10px;color:#a08862">gasto</div></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;align-items:center;gap:9px;font-size:13px"><span style="width:11px;height:11px;border-radius:50%;background:#f4825c"></span><span style="flex:1;color:#3a2e1f;font-weight:600">Alimentação</span><span style="color:#a08862">33%</span></div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:13px"><span style="width:11px;height:11px;border-radius:50%;background:#f0b429"></span><span style="flex:1;color:#3a2e1f;font-weight:600">Moradia</span><span style="color:#a08862">25%</span></div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:13px"><span style="width:11px;height:11px;border-radius:50%;background:#5aa897"></span><span style="flex:1;color:#3a2e1f;font-weight:600">Transporte</span><span style="color:#a08862">22%</span></div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:13px"><span style="width:11px;height:11px;border-radius:50%;background:#9b7ede"></span><span style="flex:1;color:#3a2e1f;font-weight:600">Lazer</span><span style="color:#a08862">20%</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-around;padding:14px 18px 22px;margin-top:8px">
+          <div style="text-align:center;color:#f4825c"><div style="font-size:18px">●</div><div style="font-size:11px;font-weight:700">Início</div></div>
+          <div style="text-align:center;color:#c9b89c"><div style="font-size:18px">○</div><div style="font-size:11px">Gastos</div></div>
+          <div style="text-align:center;color:#c9b89c"><div style="font-size:18px">○</div><div style="font-size:11px">Metas</div></div>
+          <div style="text-align:center;color:#c9b89c"><div style="font-size:18px">○</div><div style="font-size:11px">Relatórios</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:44px;max-width:760px;border-top:1px solid #d6d3c8;padding-top:22px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8a8678;margin-bottom:8px">Próximos passos</div>
+    <p style="font-size:14px;line-height:1.6;color:#56524704;color:#56524a">Me diga qual direção prefere (ou o que misturar). Em seguida construo o protótipo clicável completo: dashboard, conectar bancos via Open Finance, transações + categorização, orçamentos, cartão, investimentos, empréstimos, relatórios e a tela de revisão de importação.</p>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

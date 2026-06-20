@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family:
+      'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: #e7e5dd;
+    color: #26241e;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+}
+
+@layer components {
+  /* Card surface used across every screen */
+  .card {
+    @apply rounded-[20px] border border-line bg-paper;
+  }
+
+  /* Dark "forest" hero card */
+  .card-forest {
+    @apply rounded-[20px] bg-forest-800 text-on-dark;
+  }
+
+  /* Rounded tag / chip */
+  .chip {
+    @apply inline-flex items-center rounded-full text-xs font-semibold;
+  }
+
+  /* Custom thin scrollbar (matches design .sb) */
+  .sb {
+    scrollbar-width: thin;
+    scrollbar-color: #cfcdc1 transparent;
+  }
+  .sb::-webkit-scrollbar {
+    width: 8px;
+  }
+  .sb::-webkit-scrollbar-thumb {
+    background: #cfcdc1;
+    border-radius: 8px;
+  }
+}
