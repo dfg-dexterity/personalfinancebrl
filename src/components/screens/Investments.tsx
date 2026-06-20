@@ -1,26 +1,36 @@
 import { useFinance } from '../../context/useFinance'
-import { INVESTMENTS } from '../../data/finance'
-import { m2 } from '../../lib/format'
+import { m0, m2 } from '../../lib/format'
 
 export function Investments() {
-  const { pv } = useFinance()
-  const investments = INVESTMENTS.map((iv) => ({ ...iv, value: pv(iv.value) }))
+  const { data, pv } = useFinance()
+  if (!data) return null
+
+  const investments = data.investments
+  const total = investments.reduce((s, iv) => s + iv.value, 0)
+  const monthChange = investments.reduce((s, iv) => s + (iv.value * iv.changePct) / 100, 0)
+  const monthPct = total > 0 ? (monthChange / total) * 100 : 0
+  const up = monthChange >= 0
+  const changeColor = up ? 'text-mint' : 'text-[#f0b59b]'
 
   return (
     <div>
-      {/* hero */}
       <div className="card-forest mb-5 flex items-center justify-between p-6">
         <div>
           <div className="text-[13px] text-on-dark-soft">Total investido</div>
-          <div className="mt-[5px] text-[30px] font-extrabold">{pv(m2(31090))}</div>
+          <div className="mt-[5px] text-[30px] font-extrabold">{pv(m2(total))}</div>
         </div>
         <div className="text-right">
-          <div className="text-[13px] font-semibold text-mint">+ R$ 372 este mês</div>
-          <div className="text-[13px] font-semibold text-mint">+1,2%</div>
+          <div className={`text-[13px] font-semibold ${changeColor}`}>
+            {up ? '+ ' : '− '}
+            {pv('R$ ' + Math.round(Math.abs(monthChange)).toLocaleString('pt-BR'))} este mês
+          </div>
+          <div className={`text-[13px] font-semibold ${changeColor}`}>
+            {up ? '+' : '−'}
+            {Math.abs(monthPct).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
+          </div>
         </div>
       </div>
 
-      {/* holdings */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {investments.map((iv) => (
           <div key={iv.name} className="card flex items-center gap-[15px] rounded-[18px] p-5">
@@ -35,7 +45,7 @@ export function Investments() {
               <div className="text-[12.5px] text-muted">{iv.sub}</div>
             </div>
             <div className="text-right">
-              <div className="text-[15px] font-bold text-ink">{iv.value}</div>
+              <div className="text-[15px] font-bold text-ink">{pv(m0(iv.value))}</div>
               <div className="text-[13px] font-semibold" style={{ color: iv.changeColor }}>
                 {iv.change}
               </div>

@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import { CategoryPickerModal } from './components/CategoryPickerModal'
 import { Sidebar } from './components/Sidebar'
 import { Topbar } from './components/Topbar'
@@ -11,7 +12,6 @@ import { Loans } from './components/screens/Loans'
 import { Reports } from './components/screens/Reports'
 import { Transactions } from './components/screens/Transactions'
 import { useFinance } from './context/useFinance'
-import type { ComponentType } from 'react'
 import type { ScreenKey } from './types'
 
 const SCREENS: Record<ScreenKey, ComponentType> = {
@@ -27,7 +27,7 @@ const SCREENS: Record<ScreenKey, ComponentType> = {
 }
 
 export default function App() {
-  const { screen, dens } = useFinance()
+  const { data, error, screen, dens, reload } = useFinance()
   const Screen = SCREENS[screen]
 
   return (
@@ -35,8 +35,29 @@ export default function App() {
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar />
-        <main key={screen} className="sb flex-1 animate-fadeUp overflow-y-auto" style={{ padding: dens.pad }}>
-          <Screen />
+        <main
+          key={data ? screen : 'loading'}
+          className="sb flex-1 animate-fadeUp overflow-y-auto"
+          style={{ padding: dens.pad }}
+        >
+          {error ? (
+            <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+              <div className="text-sm text-danger">{error}</div>
+              <button
+                type="button"
+                onClick={() => void reload()}
+                className="rounded-xl bg-forest-800 px-4 py-2 text-sm font-bold text-white"
+              >
+                Tentar novamente
+              </button>
+            </div>
+          ) : !data ? (
+            <div className="flex h-full items-center justify-center text-sm text-muted">
+              Carregando…
+            </div>
+          ) : (
+            <Screen />
+          )}
         </main>
       </div>
       <CategoryPickerModal />

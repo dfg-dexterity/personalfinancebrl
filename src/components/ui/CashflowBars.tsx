@@ -1,7 +1,7 @@
-import { useFinance } from '../../context/useFinance'
-import { MONTH_LABELS } from '../../data/finance'
+import type { ApiCashflow } from '../../api/types'
 
 interface CashflowBarsProps {
+  data: ApiCashflow[]
   height: number
   barWidth: number
   innerGap: number
@@ -9,39 +9,29 @@ interface CashflowBarsProps {
   labelSize: number
 }
 
-/** Entradas (green) vs Saídas (sand) grouped bar chart, driven by the scenario. */
+/** Entradas (green) vs Saídas (sand) grouped bar chart, scaled to the period max. */
 export function CashflowBars({
+  data,
   height,
   barWidth,
   innerGap,
   monthGap,
   labelSize,
 }: CashflowBarsProps) {
-  const { scen } = useFinance()
-  const months = scen.in.map((v, i) => ({
-    label: MONTH_LABELS[i],
-    inH: v,
-    outH: scen.out[i],
-  }))
+  const max = Math.max(1, ...data.flatMap((m) => [m.in, m.out]))
 
   return (
     <div className="flex items-end" style={{ height, gap: monthGap }}>
-      {months.map((m) => (
-        <div
-          key={m.label}
-          className="flex h-full flex-1 flex-col items-center justify-end gap-2"
-        >
-          <div
-            className="flex h-full w-full items-end justify-center"
-            style={{ gap: innerGap }}
-          >
+      {data.map((m) => (
+        <div key={m.label} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+          <div className="flex h-full w-full items-end justify-center" style={{ gap: innerGap }}>
             <div
               className="rounded-t"
-              style={{ width: barWidth, height: `${m.inH}%`, background: '#3f7a55' }}
+              style={{ width: barWidth, height: `${(m.in / max) * 100}%`, background: '#3f7a55' }}
             />
             <div
               className="rounded-t"
-              style={{ width: barWidth, height: `${m.outH}%`, background: '#d9bba6' }}
+              style={{ width: barWidth, height: `${(m.out / max) * 100}%`, background: '#d9bba6' }}
             />
           </div>
           <span className="text-faint" style={{ fontSize: labelSize }}>

@@ -12,6 +12,7 @@
       "Bash(npx vite *)",
       "Bash(npx tsc *)",
       "Bash(npx eslint *)",
+      "Bash(npx prisma *)",
       "Bash(node *)",
       "Bash(git status)",
       "Bash(git status *)",

@@ -11,16 +11,16 @@ const FILTERS: { key: TxFilter; label: string }[] = [
 ]
 
 export function Transactions() {
-  const { transactions, txFilter, setTxFilter, pv, openPicker } = useFinance()
+  const { data, txFilter, setTxFilter, pv, openPicker } = useFinance()
+  if (!data) return null
 
-  let list = transactions
+  let list = data.transactions
   if (txFilter === 'uncat') list = list.filter((t) => !t.cat)
   else if (txFilter !== 'all') list = list.filter((t) => t.cat === txFilter)
   const visibleTx = list.map((t) => mapTx(t, pv))
 
   return (
     <div className="card overflow-hidden">
-      {/* filter chips */}
       <div className="flex flex-wrap gap-2 border-b border-line-soft px-[22px] py-[18px]">
         {FILTERS.map((f) => {
           const active = txFilter === f.key
@@ -42,7 +42,6 @@ export function Transactions() {
         })}
       </div>
 
-      {/* column header */}
       <div className="flex items-center border-b border-line-soft px-[22px] py-[11px] text-[11px] font-semibold uppercase tracking-[0.5px] text-faint">
         <div className="flex-1">Descrição</div>
         <div className="w-[160px]">Categoria</div>
@@ -51,7 +50,6 @@ export function Transactions() {
         <div className="w-[120px] text-right">Valor</div>
       </div>
 
-      {/* rows */}
       {visibleTx.map((t) => (
         <button
           key={t.id}
@@ -78,11 +76,8 @@ export function Transactions() {
             </span>
           </div>
           <div className="w-[140px] text-[13px] text-ink-3">{t.account}</div>
-          <div className="w-[90px] text-[13px] text-faint">{t.date}</div>
-          <div
-            className="w-[120px] text-right text-sm font-bold"
-            style={{ color: t.amountColor }}
-          >
+          <div className="w-[90px] text-[13px] text-faint">{t.dateLabel}</div>
+          <div className="w-[120px] text-right text-sm font-bold" style={{ color: t.amountColor }}>
             {t.amountText}
           </div>
         </button>
