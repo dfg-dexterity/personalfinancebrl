@@ -13,6 +13,7 @@
       "Bash(npx tsc *)",
       "Bash(npx eslint *)",
       "Bash(npx prisma *)",
+      "Bash(npm --prefix server *)",
       "Bash(node *)",
       "Bash(git status)",
       "Bash(git status *)",
