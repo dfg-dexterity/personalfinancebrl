@@ -1,3 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 
-export const prisma = new PrismaClient()
+// Reuse a single PrismaClient across hot reloads / serverless invocations so we
+// don't exhaust the database's connection pool.
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
