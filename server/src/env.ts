@@ -9,7 +9,7 @@ function req(name: string, fallback?: string): string {
 }
 
 export const env = {
-  databaseUrl: req('DATABASE_URL', 'file:./dev.db'),
+  databaseUrl: req('DATABASE_URL'),
   jwtSecret: req('JWT_SECRET', 'dev-secret-change-me'),
   port: Number.parseInt(process.env.PORT ?? '3001', 10),
   openFinanceProvider: process.env.OPENFINANCE_PROVIDER ?? 'mock',

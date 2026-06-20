@@ -1,11 +1,16 @@
-// Prisma schema — SQLite + multi-user "finanças" backend
+// Prisma schema — PostgreSQL + multi-user "finanças" backend
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // "native" for local dev; "rhel-openssl-3.0.x" for the Vercel/AWS Lambda runtime
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Pooled connection (PgBouncer) — used by the app at runtime
+  url       = env("DATABASE_URL")
+  // Direct connection — used for migrations / `prisma db push`
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
