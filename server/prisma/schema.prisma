@@ -1,0 +1,179 @@
+// Prisma schema — SQLite + multi-user "finanças" backend
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  plan         String   @default("Pro")
+  initials     String   @default("")
+  createdAt    DateTime @default(now())
+
+  accounts     Account[]
+  transactions Transaction[]
+  budgets      Budget[]
+  investments  Investment[]
+  loans        Loan[]
+  cards        Card[]
+  bankLinks    BankLink[]
+  imports      ImportItem[]
+  consents     Consent[]
+}
+
+model Category {
+  key   String @id
+  name  String
+  icon  String
+  color String
+  bg    String
+  sort  Int    @default(0)
+}
+
+model Account {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  kind         String
+  balanceCents Int      @default(0)
+  letter       String
+  color        String
+  externalId   String?
+  bankLinkId   String?
+  bankLink     BankLink? @relation(fields: [bankLinkId], references: [id])
+  createdAt    DateTime @default(now())
+
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId   String?
+  account     Account? @relation(fields: [accountId], references: [id])
+  name        String
+  categoryKey String?
+  amountCents Int
+  date        DateTime
+  source      String   @default("manual") // manual | openfinance
+  createdAt   DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model Budget {
+  id          String @id @default(cuid())
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryKey String
+  month       String // "2026-06"
+  limitCents  Int
+
+  @@unique([userId, categoryKey, month])
+}
+
+model Investment {
+  id         String @id @default(cuid())
+  userId     String
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  sub        String
+  valueCents Int
+  changePct  Float
+  tag        String
+  bg         String
+  fg         String
+  sort       Int    @default(0)
+}
+
+model Loan {
+  id                String @id @default(cuid())
+  userId            String
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  bank              String
+  rate              String
+  remainingCents    Int
+  monthlyCents      Int
+  paidInstallments  Int
+  totalInstallments Int
+  sort              Int    @default(0)
+}
+
+model Card {
+  id           String @id @default(cuid())
+  userId       String
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  invoiceCents Int
+  limitCents   Int
+  usedCents    Int
+  dueDate      String
+  closeDate    String
+  bestDay      String
+
+  items CardItem[]
+}
+
+model CardItem {
+  id          String @id @default(cuid())
+  cardId      String
+  card        Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  name        String
+  categoryKey String
+  date        String
+  installment String
+  amountCents Int
+}
+
+model BankLink {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankId      String // nu, it, in, c6, bb
+  name        String
+  letter      String
+  color       String
+  status      String    @default("off") // off | connecting | on
+  consentId   String?
+  connectedAt DateTime?
+
+  accounts Account[]
+
+  @@unique([userId, bankId])
+}
+
+model Consent {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankId    String
+  status    String    @default("AWAITING_AUTHORISATION") // AWAITING_AUTHORISATION | AUTHORISED | REJECTED
+  scopes    String // JSON-encoded string[]
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+}
+
+model ImportItem {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  raw         String
+  merchant    String
+  amountCents Int
+  categoryKey String
+  status      String   @default("pending") // pending | added | skipped
+  bankId      String?
+  createdAt   DateTime @default(now())
+}

@@ -1,8 +1,13 @@
+import type { ApiTransaction } from '../api/types'
 import { CATS } from '../data/finance'
-import type { Transaction } from '../types'
-import { fmt } from './format'
+import type { CategoryKey } from '../types'
+import { fmt, formatDateLabel } from './format'
 
-export interface TxView extends Transaction {
+export interface TxView {
+  id: string
+  name: string
+  account: string
+  dateLabel: string
   icon: string
   iconBg: string
   rowBg: string
@@ -15,15 +20,15 @@ export interface TxView extends Transaction {
   amountColor: string
 }
 
-/**
- * Decorates a raw transaction with icon + category colors and the formatted,
- * privacy-aware amount. Uncategorized rows get the warm "Categorizar" styling.
- */
-export function mapTx(t: Transaction, pv: (s: string) => string): TxView {
-  const c = t.cat ? CATS[t.cat] : null
+/** Decorates an API transaction with icon + category colors and a formatted amount. */
+export function mapTx(t: ApiTransaction, pv: (s: string) => string): TxView {
+  const c = t.cat ? CATS[t.cat as CategoryKey] : null
   const uncat = c === null
   return {
-    ...t,
+    id: t.id,
+    name: t.name,
+    account: t.account,
+    dateLabel: formatDateLabel(t.date),
     icon: c ? c.icon : '？',
     iconBg: uncat ? '#fbf0df' : c.bg,
     rowBg: uncat ? '#fff7ea' : 'transparent',

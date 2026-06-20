@@ -1,23 +1,21 @@
+import { useAuth } from '../auth/useAuth'
 import { useFinance } from '../context/useFinance'
 import { NAV_DEF } from '../data/finance'
 
 export function Sidebar() {
-  const { screen, go, imports } = useFinance()
-  const pendingCount = imports.filter((i) => i.status === 'pending').length
+  const { user, logout } = useAuth()
+  const { screen, go, data } = useFinance()
+  const pendingCount = data ? data.imports.filter((i) => i.status === 'pending').length : 0
 
   return (
     <aside className="flex w-[252px] flex-none flex-col bg-forest-900 px-4 py-6 text-side-text">
-      {/* brand */}
       <div className="flex items-center gap-[11px] px-[10px] pb-[26px] pt-1">
         <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-mint text-[17px] font-extrabold text-forest-900">
           f
         </div>
-        <div className="text-[17px] font-extrabold tracking-[-0.3px] text-white">
-          finanças
-        </div>
+        <div className="text-[17px] font-extrabold tracking-[-0.3px] text-white">finanças</div>
       </div>
 
-      {/* nav */}
       <nav className="flex flex-1 flex-col gap-[3px]">
         {NAV_DEF.map((n) => {
           const active = screen === n.key
@@ -33,9 +31,7 @@ export function Sidebar() {
                   : 'font-medium text-side-item hover:bg-white/[0.05]'
               }`}
             >
-              <span
-                className={`w-5 text-center text-base ${active ? 'opacity-100' : 'opacity-70'}`}
-              >
+              <span className={`w-5 text-center text-base ${active ? 'opacity-100' : 'opacity-70'}`}>
                 {n.icon}
               </span>
               <span className="flex-1">{n.label}</span>
@@ -49,16 +45,22 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* account */}
       <div className="mt-4 flex items-center gap-[11px] rounded-2xl bg-white/[0.06] p-[13px]">
         <div className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-mint text-sm font-extrabold text-forest-900">
-          MR
+          {user?.initials || 'U'}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[13px] font-bold text-white">Marina Ribeiro</div>
-          <div className="text-[11px] text-side-muted">Plano Pro</div>
+          <div className="truncate text-[13px] font-bold text-white">{user?.name ?? 'Usuário'}</div>
+          <div className="text-[11px] text-side-muted">Plano {user?.plan ?? 'Free'}</div>
         </div>
-        <span className="text-base text-side-muted">⚙</span>
+        <button
+          type="button"
+          onClick={logout}
+          title="Sair da conta"
+          className="text-base text-side-muted transition-colors hover:text-white"
+        >
+          ⎋
+        </button>
       </div>
     </aside>
   )

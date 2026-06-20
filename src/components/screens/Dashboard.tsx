@@ -1,5 +1,4 @@
 import { useFinance } from '../../context/useFinance'
-import { ACCOUNTS } from '../../data/finance'
 import { m0, m2 } from '../../lib/format'
 import { mapBudget } from '../../lib/mapBudget'
 import { mapTx } from '../../lib/mapTx'
@@ -8,56 +7,54 @@ import { ProgressBar } from '../ui/ProgressBar'
 import { SpendingDonut } from '../ui/SpendingDonut'
 
 export function Dashboard() {
-  const { scen, pv, dens, transactions, imports, go } = useFinance()
-  const gap = dens.gap
+  const { data, pv, dens, go } = useFinance()
+  if (!data) return null
 
+  const { summary, accounts, transactions, budgets, imports } = data
+  const gap = dens.gap
   const pendingCount = imports.filter((i) => i.status === 'pending').length
   const recentTx = transactions.slice(0, 5).map((t) => mapTx(t, pv))
-  const budgetsMini = scen.bdata.slice(0, 3).map(mapBudget)
-  const accounts = ACCOUNTS.map((a) => ({ ...a, balance: pv(a.balance) }))
+  const budgetsMini = budgets.slice(0, 3).map(mapBudget)
 
   return (
     <div>
       {/* KPI row */}
-      <div
-        className="grid grid-cols-2 xl:grid-cols-4"
-        style={{ gap, marginBottom: gap }}
-      >
+      <div className="grid grid-cols-2 xl:grid-cols-4" style={{ gap, marginBottom: gap }}>
         <div className="card-forest p-5">
           <div className="text-xs text-on-dark-soft">Patrimônio total</div>
           <div className="my-[6px] mb-1 text-[27px] font-extrabold tracking-[-0.5px]">
-            {pv(m2(scen.patrimonio))}
+            {pv(m2(summary.patrimonio))}
           </div>
-          <div className="text-xs font-semibold" style={{ color: scen.deltaColor }}>
-            {scen.delta}
+          <div className="text-xs font-semibold" style={{ color: summary.deltaColor }}>
+            {summary.delta}
           </div>
         </div>
 
         <div className="card p-5">
           <div className="text-xs text-muted">Entradas</div>
           <div className="my-[6px] mb-1 text-[27px] font-extrabold tracking-[-0.5px] text-ink">
-            {pv(m0(scen.entradas))}
+            {pv(m0(summary.entradas))}
           </div>
-          <div className="text-xs font-semibold text-forest-600">{scen.entradasNote}</div>
+          <div className="text-xs font-semibold text-forest-600">{summary.entradasNote}</div>
         </div>
 
         <div className="card p-5">
           <div className="text-xs text-muted">Saídas</div>
           <div className="my-[6px] mb-1 text-[27px] font-extrabold tracking-[-0.5px] text-ink">
-            {pv(m0(scen.saidas))}
+            {pv(m0(summary.saidas))}
           </div>
-          <div className="text-xs font-semibold" style={{ color: scen.saidasColor }}>
-            {scen.saidasNote}
+          <div className="text-xs font-semibold" style={{ color: summary.saidasColor }}>
+            {summary.saidasNote}
           </div>
         </div>
 
         <div className="card p-5">
           <div className="text-xs text-muted">Taxa de poupança</div>
           <div className="my-[6px] mb-1 text-[27px] font-extrabold tracking-[-0.5px] text-ink">
-            {scen.savings}
+            {summary.savings}
           </div>
-          <div className="text-xs font-semibold" style={{ color: scen.savingsColor }}>
-            {pv(scen.savingsNote)}
+          <div className="text-xs font-semibold" style={{ color: summary.savingsColor }}>
+            {pv(summary.savingsNote)}
           </div>
         </div>
       </div>
@@ -86,9 +83,7 @@ export function Dashboard() {
 
       {/* two columns */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]" style={{ gap }}>
-        {/* left */}
         <div className="flex flex-col gap-[18px]">
-          {/* cashflow */}
           <div className="card p-[22px]">
             <div className="mb-5 flex items-center justify-between">
               <div className="text-[15px] font-bold text-ink">Fluxo de caixa</div>
@@ -103,10 +98,16 @@ export function Dashboard() {
                 </span>
               </div>
             </div>
-            <CashflowBars height={180} barWidth={18} innerGap={6} monthGap={18} labelSize={11} />
+            <CashflowBars
+              data={summary.cashflow}
+              height={180}
+              barWidth={18}
+              innerGap={6}
+              monthGap={18}
+              labelSize={11}
+            />
           </div>
 
-          {/* recent transactions */}
           <div className="card p-[22px]">
             <div className="mb-[14px] flex items-center justify-between">
               <div className="text-[15px] font-bold text-ink">Transações recentes</div>
@@ -133,7 +134,7 @@ export function Dashboard() {
                   <div className="flex-1">
                     <div className="text-sm font-semibold text-ink">{t.name}</div>
                     <div className="text-xs text-faint">
-                      {t.account} · {t.date}
+                      {t.account} · {t.dateLabel}
                     </div>
                   </div>
                   <span
@@ -150,13 +151,14 @@ export function Dashboard() {
                   </div>
                 </div>
               ))}
+              {recentTx.length === 0 && (
+                <div className="py-6 text-center text-sm text-muted">Sem transações no mês.</div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* right */}
         <div className="flex flex-col gap-[18px]">
-          {/* accounts */}
           <div className="card p-[22px]">
             <div className="mb-4 flex items-center justify-between">
               <div className="text-[15px] font-bold text-ink">Contas</div>
@@ -177,19 +179,26 @@ export function Dashboard() {
                     <div className="text-[13.5px] font-semibold text-ink">{a.name}</div>
                     <div className="text-[11.5px] text-faint">{a.kind}</div>
                   </div>
-                  <div className="text-sm font-bold text-ink">{a.balance}</div>
+                  <div className="text-sm font-bold text-ink">{pv(m0(a.balance))}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* spending donut */}
           <div className="card p-[22px]">
             <div className="mb-4 text-[15px] font-bold text-ink">Gastos por categoria</div>
-            <SpendingDonut size={108} inner={66} dot={10} wrapGap={18} legendGap={9} />
+            <SpendingDonut
+              gradient={summary.donutGradient}
+              cats={summary.reportCats}
+              total={summary.reportTotal}
+              size={108}
+              inner={66}
+              dot={10}
+              wrapGap={18}
+              legendGap={9}
+            />
           </div>
 
-          {/* budget mini */}
           <div className="card p-[22px]">
             <div className="mb-[14px] flex items-center justify-between">
               <div className="text-[15px] font-bold text-ink">Orçamento</div>
@@ -213,6 +222,9 @@ export function Dashboard() {
                   <ProgressBar pct={b.pct} color={b.barColor} />
                 </div>
               ))}
+              {budgetsMini.length === 0 && (
+                <div className="text-[13px] text-muted">Nenhum orçamento definido.</div>
+              )}
             </div>
           </div>
         </div>

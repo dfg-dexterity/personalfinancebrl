@@ -1,7 +1,6 @@
-/**
- * Currency + privacy formatting helpers.
- * Ported 1:1 from the "Finanças Web" design logic so values render identically.
- */
+/** Currency + privacy + date formatting helpers. */
+
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
 /** Signed currency, e.g. -64.9 -> "− R$ 64,90", 8200 -> "+ R$ 8.200,00" */
 export function fmt(v: number): string {
@@ -29,12 +28,22 @@ export function m2(v: number): string {
   )
 }
 
-/**
- * Privacy mask: when enabled, replaces digit runs inside any string that
- * mentions "R$" with bullets — mirrors the design's `pv()` helper.
- */
+/** Privacy mask: replaces digit runs inside any string mentioning "R$". */
 export function maskValue(privacy: boolean, str: string): string {
   return privacy && /R\$/.test(String(str))
     ? String(str).replace(/[\d][\d.,]*/g, '••••')
     : str
+}
+
+/** ISO date -> "Hoje" / "Ontem" / "05 jun". */
+export function formatDateLabel(iso: string): string {
+  const d = new Date(iso)
+  const now = new Date()
+  const sameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+  if (sameDay(d, now)) return 'Hoje'
+  const yesterday = new Date(now)
+  yesterday.setDate(now.getDate() - 1)
+  if (sameDay(d, yesterday)) return 'Ontem'
+  return `${String(d.getDate()).padStart(2, '0')} ${MONTHS[d.getMonth()]}`
 }

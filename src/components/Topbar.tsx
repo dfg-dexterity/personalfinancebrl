@@ -1,13 +1,24 @@
+import { useAuth } from '../auth/useAuth'
 import { useFinance } from '../context/useFinance'
 import { TITLES } from '../data/finance'
-import type { Density, Scenario } from '../types'
+import type { Density } from '../types'
 import { Dropdown } from './ui/Dropdown'
 
-const SCEN_OPTS: { value: Scenario; label: string; hint: string }[] = [
-  { value: 'Mês tranquilo', label: 'Mês tranquilo', hint: '· sobra' },
-  { value: 'Mês apertado', label: 'Mês apertado', hint: '· no limite' },
-  { value: 'Mês cheio', label: 'Mês cheio', hint: '· estourou' },
+const MONTH_NAMES = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ]
+
+function monthOptions(count = 6): { value: string; label: string }[] {
+  const now = new Date()
+  const opts: { value: string; label: string }[] = []
+  for (let i = 0; i < count; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    opts.push({ value, label: `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}` })
+  }
+  return opts
+}
 
 const DENS_OPTS: { value: Density; label: string }[] = [
   { value: 'Compacto', label: 'Compacto' },
@@ -21,20 +32,20 @@ const iconBtn =
   'flex h-[38px] w-[40px] items-center justify-center rounded-xl border border-line bg-paper text-[15px] hover:border-forest-500 transition-colors'
 
 export function Topbar() {
-  const { screen, scenario, setScenario, privacy, setPrivacy, density, setDensity, go } =
-    useFinance()
+  const { screen, month, setMonth, privacy, setPrivacy, density, setDensity, go } = useFinance()
+  const { user } = useAuth()
   const [title, sub] = TITLES[screen]
+  const months = monthOptions()
+  const monthLabel = months.find((m) => m.value === month)?.label ?? 'Mês'
+  const displaySub = screen === 'dash' && user ? `Bem-vinda de volta, ${user.name.split(' ')[0]}` : sub
 
   return (
     <header className="flex flex-none items-center gap-[18px] border-b border-line bg-canvas px-9 py-5">
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[22px] font-extrabold tracking-[-0.4px] text-ink">
-          {title}
-        </div>
-        <div className="truncate text-[13px] text-muted">{sub}</div>
+        <div className="truncate text-[22px] font-extrabold tracking-[-0.4px] text-ink">{title}</div>
+        <div className="truncate text-[13px] text-muted">{displaySub}</div>
       </div>
 
-      {/* search (visual, matches design) */}
       <div
         className="hidden items-center gap-2 rounded-xl border border-line bg-paper px-[14px] py-[9px] text-faint lg:flex"
         style={{ width: 240 }}
@@ -43,22 +54,20 @@ export function Topbar() {
         <span className="text-[13px]">Buscar transação…</span>
       </div>
 
-      {/* scenario selector (the "month") */}
-      <Dropdown<Scenario>
+      <Dropdown<string>
         trigger={
           <span className="flex items-center gap-[7px]">
-            📅 Junho 2026 <span className="text-faint">⌄</span>
+            📅 {monthLabel} <span className="text-faint">⌄</span>
           </span>
         }
         triggerClassName={pill}
-        heading="Como foi o mês?"
-        options={SCEN_OPTS}
-        value={scenario}
-        onChange={setScenario}
-        width={230}
+        heading="Mês de referência"
+        options={months}
+        value={month}
+        onChange={setMonth}
+        width={210}
       />
 
-      {/* privacy toggle */}
       <button
         type="button"
         title={privacy ? 'Mostrar valores' : 'Ocultar valores'}
@@ -68,7 +77,6 @@ export function Topbar() {
         {privacy ? '🙈' : '👁'}
       </button>
 
-      {/* density selector */}
       <Dropdown<Density>
         trigger={<span className="text-[15px]">⇕</span>}
         triggerClassName={iconBtn}

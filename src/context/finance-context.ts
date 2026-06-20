@@ -1,46 +1,38 @@
 import { createContext } from 'react'
-import type {
-  BankId,
-  BankStatusMap,
-  CategoryKey,
-  Density,
-  ImportItem,
-  Scenario,
-  ScenarioData,
-  ScreenKey,
-  Transaction,
-} from '../types'
+import type { Bootstrap } from '../api/types'
+import type { Density, ScreenKey } from '../types'
 
-export type TxFilter = CategoryKey | 'all' | 'uncat'
+export type TxFilter = string // 'all' | 'uncat' | category key
 
 export interface FinanceContextValue {
-  // navigation + ui state
+  // data
+  data: Bootstrap | null
+  loading: boolean
+  error: string | null
+  // ui state
   screen: ScreenKey
-  picker: number | null
+  picker: string | null // transaction id
   txFilter: TxFilter
-  bankStatus: BankStatusMap
-  connecting: BankId | null
-  transactions: Transaction[]
-  imports: ImportItem[]
-  // tweakable controls (scenario / privacy / density)
-  scenario: Scenario
   privacy: boolean
   density: Density
-  // derived config
-  scen: ScenarioData
+  month: string
+  connecting: string | null // bankId being connected
+  // derived
   dens: { pad: string; gap: string }
   pv: (s: string) => string
-  // actions
+  // ui actions
   go: (s: ScreenKey) => void
-  openPicker: (id: number) => void
+  openPicker: (id: string) => void
   closePicker: () => void
-  setCat: (id: number, cat: CategoryKey) => void
   setTxFilter: (f: TxFilter) => void
-  connectBank: (id: BankId) => void
-  resolveImport: (id: string, approve: boolean) => void
-  setScenario: (s: Scenario) => void
   setPrivacy: (p: boolean) => void
   setDensity: (d: Density) => void
+  setMonth: (m: string) => void
+  reload: () => Promise<void>
+  // async mutations (call API, then refetch)
+  categorize: (id: string, cat: string) => Promise<void>
+  connectBank: (bankId: string) => Promise<void>
+  resolveImport: (id: string, approve: boolean) => Promise<void>
 }
 
 export const FinanceContext = createContext<FinanceContextValue | null>(null)

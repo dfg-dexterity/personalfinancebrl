@@ -1,21 +1,23 @@
 import { useFinance } from '../../context/useFinance'
 import { CATS } from '../../data/finance'
 import { fmt } from '../../lib/format'
+import type { CategoryKey } from '../../types'
 
 export function ImportReview() {
-  const { imports, resolveImport, go } = useFinance()
+  const { data, resolveImport, go } = useFinance()
+  if (!data) return null
 
+  const imports = data.imports
   const total = imports.length
   const pending = imports.filter((i) => i.status === 'pending')
   const pendingCount = pending.length
   const addedCount = imports.filter((i) => i.status === 'added').length
   const resolved = total - pendingCount
-  const progress = Math.round((resolved / total) * 100) + '%'
+  const progress = total > 0 ? Math.round((resolved / total) * 100) + '%' : '100%'
   const done = pendingCount === 0
 
   return (
     <div className="max-w-[760px]">
-      {/* progress */}
       <div className="mb-5 h-[9px] overflow-hidden rounded-md bg-track">
         <div
           className="h-full rounded-md bg-forest-600 transition-[width] duration-300"
@@ -26,17 +28,14 @@ export function ImportReview() {
       {!done && (
         <>
           <div className="mb-4 text-sm text-ink-3">
-            {pendingCount} pendentes · {addedCount} confirmadas. Confirme a categoria
-            sugerida ou pule — decisões viram regras automáticas.
+            {pendingCount} pendentes · {addedCount} confirmadas. Confirme a categoria sugerida ou
+            pule — decisões viram regras automáticas.
           </div>
           <div className="flex flex-col gap-[13px]">
             {pending.map((i) => {
-              const c = CATS[i.cat]
+              const c = CATS[i.cat as CategoryKey] ?? CATS.other
               return (
-                <div
-                  key={i.id}
-                  className="card flex items-center gap-[18px] rounded-[18px] p-[18px]"
-                >
+                <div key={i.id} className="card flex items-center gap-[18px] rounded-[18px] p-[18px]">
                   <div className="min-w-0 flex-1">
                     <div className="mono text-xs text-muted">{i.raw}</div>
                     <div className="mt-[3px] text-[15px] font-bold text-ink">{i.merchant}</div>
@@ -56,14 +55,14 @@ export function ImportReview() {
                   <div className="flex gap-[9px]">
                     <button
                       type="button"
-                      onClick={() => resolveImport(i.id, true)}
+                      onClick={() => void resolveImport(i.id, true)}
                       className="rounded-xl bg-forest-800 px-[18px] py-[10px] text-[13px] font-bold text-white transition-opacity hover:opacity-90"
                     >
                       Confirmar
                     </button>
                     <button
                       type="button"
-                      onClick={() => resolveImport(i.id, false)}
+                      onClick={() => void resolveImport(i.id, false)}
                       className="rounded-xl bg-line-soft px-4 py-[10px] text-[13px] font-semibold text-ink-3 transition-colors hover:bg-track"
                     >
                       Pular

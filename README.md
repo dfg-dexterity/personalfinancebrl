@@ -1,88 +1,119 @@
 # finanças · controle de finanças pessoais
 
-Painel web de finanças pessoais (em português, valores em **BRL / R$**), implementado
-a partir do design **“Finanças Web”** — a direção visual *Sereno*: clara, calma e verde.
+App **full-stack** de finanças pessoais (em português, valores em **BRL / R$**), a partir do
+design **“Finanças Web”** — direção visual *Sereno*: clara, calma e verde.
 
-Conecta contas via **Open Finance**, centraliza transações, categoriza gastos, acompanha
-orçamentos, cartões, aplicações, empréstimos e relatórios.
+Conta com **frontend React** e um **backend real (Express + Prisma + SQLite)** com
+**multiusuário (login JWT)**, persistência e um módulo de **Open Finance** com provider
+plugável (mock por padrão; pronto para um agregador real como Pluggy/Belvo).
 
-> Construído com **React + Vite + Tailwind CSS (TypeScript)**.
-
-## ✨ Telas
-
-Navegação por barra lateral entre 9 telas, todas implementadas:
-
-| Tela | Conteúdo |
+| Camada | Stack |
 | --- | --- |
-| **Visão geral** | KPIs (patrimônio, entradas, saídas, taxa de poupança), banner de importação, fluxo de caixa, transações recentes, contas, gastos por categoria e mini-orçamento |
-| **Transações** | Lista filtrável; clicar numa linha abre o modal de categorização |
-| **Orçamentos** | Cards-resumo + barras por categoria (viram âmbar perto do limite, vermelho ao estourar) |
-| **Cartões** | Cartão de crédito, fatura, limite e lançamentos |
-| **Aplicações** | Carteira de investimentos com variação |
-| **Empréstimos** | Saldo devedor, parcelas e progresso de quitação |
-| **Relatórios** | Entradas × Saídas (6 meses), donut por categoria e insight |
-| **Revisar importação** | Confirmação/descarte de transações importadas via Open Finance |
-| **Conexões** | Bancos conectados via Open Finance, com fluxo de conexão |
+| Frontend | React 18 + Vite + Tailwind CSS + TypeScript |
+| Backend | Node + Express + Prisma + SQLite + TypeScript |
+| Auth | JWT (cadastro/login), senhas com bcrypt |
+| Open Finance | Provider abstrato — `mock` (default) ou `pluggy` (adaptador) |
 
-## 🎛️ Controles interativos
+## ✨ Funcionalidades
 
-Disponíveis na barra superior — reproduzem os “knobs” do design original:
+- **9 telas**: Visão geral, Transações, Orçamentos, Cartões, Aplicações, Empréstimos,
+  Relatórios, Revisar importação e Conexões.
+- **Tudo persiste no backend**: categorizar transação, conectar banco, confirmar/pular
+  importação — tudo grava no banco de dados e recalcula os números de verdade.
+- **Dashboard calculado**: KPIs (patrimônio, entradas, saídas, taxa de poupança), fluxo de
+  caixa de 6 meses, donut de gastos por categoria e orçamentos com gasto real — todos
+  derivados das transações.
+- **Multiusuário**: cada conta tem seus próprios dados (semeados automaticamente no cadastro).
+- **Controles**: seletor de **mês**, **privacidade** (oculta valores) e **densidade**.
 
-- **Cenário do mês** (`📅 Junho 2026`): *Mês tranquilo · Mês apertado · Mês cheio* — recalcula
-  todos os números, gráficos e cores da aplicação.
-- **Privacidade** (`👁`): oculta/mostra todos os valores em R$.
-- **Densidade** (`⇕`): *Compacto · Confortável · Espaçoso* — ajusta o espaçamento do conteúdo.
+## 🔓 Open Finance
 
-Outras interações: navegação entre telas, categorização de transações (modal), filtros de
-transações, revisão de importação (confirmar/pular) e conexão de bancos (com estado de
-carregamento).
+> **Importante:** uma conexão **real** com o Open Finance Brasil exige ser instituição
+> autorizada pelo BACEN (com certificados ICP-Brasil, mTLS e perfil FAPI) **ou** usar um
+> agregador autorizado (ex.: **Pluggy**, **Belvo**) — em geral pago e com chaves de API.
 
-## 🚀 Começando
+Por isso o backend usa um **provider plugável** (`server/src/openfinance/`):
+
+- **`mock`** (padrão): simula fielmente o fluxo `consentimento → autorização → sincronização`.
+  Conectar um banco cria um consentimento, autoriza e importa transações para revisão —
+  tudo funcional, sem credenciais.
+- **`pluggy`** (adaptador): `pluggyProvider.ts` mostra exatamente onde plugar um agregador
+  real. Basta implementar os 3 métodos da interface, preencher `PLUGGY_*` no `.env` e definir
+  `OPENFINANCE_PROVIDER="pluggy"` — o resto do app já fala essa interface.
+
+## 🚀 Como rodar
+
+Pré-requisito: **Node 18+**.
+
+### 1) Backend (porta 3001)
 
 ```bash
-npm install      # instala as dependências
-npm run dev      # servidor de desenvolvimento (http://localhost:5173)
-npm run build    # type-check + build de produção (dist/)
-npm run preview  # serve o build de produção
-npm run lint     # ESLint
-npm run typecheck
+cd server
+npm install
+cp .env.example .env          # ajuste JWT_SECRET
+npm run db:push               # cria o banco SQLite (server/prisma/dev.db)
+npm run seed                  # popula categorias + usuário demo
+npm run dev                   # API em http://localhost:3001
 ```
 
-Requer **Node 18+**.
+### 2) Frontend (porta 5173)
+
+Em outro terminal, na raiz do projeto:
+
+```bash
+npm install
+npm run dev                   # http://localhost:5173 (faz proxy de /api → 3001)
+```
+
+Atalhos a partir da raiz: `npm run server:install`, `npm run server:setup`, `npm run server`.
+
+### Login de teste
+
+```
+marina@financas.app  ·  demo1234
+```
+
+Ou crie uma conta nova na tela de cadastro (ela vem com dados de exemplo).
 
 ## 🗂️ Estrutura
 
 ```
-src/
-├── App.tsx                  # shell: sidebar + topbar + roteamento de telas + modal
-├── main.tsx                 # ponto de entrada (envolve em <FinanceProvider>)
-├── index.css                # Tailwind + estilos base (fontes, scrollbar, cards)
-├── types.ts                 # tipos do domínio
-├── context/
-│   ├── finance-context.ts   # contrato do contexto
-│   ├── FinanceProvider.tsx  # estado global + ações (cenário, privacidade, etc.)
-│   └── useFinance.ts        # hook de acesso
-├── data/finance.ts          # categorias, cenários, contas, bancos, dados mock
-├── lib/                     # format (R$/máscara), mapTx, mapBudget
-└── components/
-    ├── Sidebar.tsx · Topbar.tsx · CategoryPickerModal.tsx
-    ├── ui/                  # Dropdown · ProgressBar · CashflowBars · SpendingDonut
-    └── screens/             # 9 telas
-
-design/                      # arquivos-fonte do design (.dc.html) para referência
+.
+├── src/                      # Frontend (React + Vite + Tailwind)
+│   ├── api/                  # client HTTP + tipos da API
+│   ├── auth/                 # AuthProvider + hook (JWT)
+│   ├── components/           # Login, Sidebar, Topbar, telas, ui/
+│   ├── context/              # FinanceProvider (busca bootstrap + mutações)
+│   └── lib/                  # format (R$/máscara/data), mapTx, mapBudget
+│
+├── server/                   # Backend (Express + Prisma + SQLite)
+│   ├── prisma/               # schema.prisma + seed
+│   └── src/
+│       ├── routes/           # auth, bootstrap, transactions, budgets, imports, connections
+│       ├── openfinance/      # provider (interface + mock + pluggy stub)
+│       ├── bootstrap.ts      # calcula KPIs/fluxo/donut/orçamentos a partir do DB
+│       └── seedUser.ts       # dados de exemplo por usuário
+│
+└── design/                   # arquivos-fonte do design (.dc.html) para referência
 ```
 
-## 🎨 Design tokens
+## 🔌 API (resumo)
 
-Os tokens da direção *Sereno* estão em `tailwind.config.js`:
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| POST | `/api/auth/register` · `/api/auth/login` | cadastro / login (retorna JWT) |
+| GET | `/api/bootstrap?month=YYYY-MM` | tudo que a UI precisa para o mês |
+| PATCH | `/api/transactions/:id` | (re)categorizar transação |
+| POST | `/api/transactions` | criar transação |
+| POST | `/api/budgets` | criar/atualizar orçamento |
+| POST | `/api/imports/:id/resolve` | confirmar (vira transação) ou pular import |
+| POST | `/api/connections/:bankId/connect` | conectar banco via Open Finance |
+| POST | `/api/connections/:bankId/sync` | re-sincronizar banco conectado |
 
-- **Fundo**: `#f7f6f2` (canvas) · **Cards**: `#fff` com borda `#ecebe3`
-- **Verdes**: `#1c3525` (sidebar), `#1f3d2b` (cards escuros/botões), `#3f7a55` (positivo), `#9ee6b5` (mint)
-- **Texto**: `#26241e` / `#8a8678` / `#a8a499`
-- **Tipografia**: *Plus Jakarta Sans* (interface) + *IBM Plex Mono* (valores)
+Rotas de dados exigem `Authorization: Bearer <token>`.
 
 ## 📝 Notas
 
-- Os dados são **mock** em `src/data/finance.ts` — não há backend. A integração Open
-  Finance é simulada (inclusive o estado de “Conectando…”).
-- Os arquivos originais do design ficam em `design/` apenas como referência.
+- O banco é **SQLite** (`server/prisma/dev.db`) — zero configuração. Os dados de exemplo são
+  semeados por usuário; a integração Open Finance é simulada pelo provider `mock`.
+- `.env` (com segredos) e `dev.db` não são versionados.
